@@ -38,13 +38,21 @@
   text-decoration: none;
   color: var(--wk-on-dark);
 }
-/* The banner image as supplied, scaled by height so it stays in proportion.
-   The background of the supplied crop has been keyed out so the drawing sits straight on the bar; it is about 2.7 times wider than tall. */
-.wk-brand-logo {
+/* The wordmark as live text: the mosquito stands in for the M, then OSKATEER in Amatic SC. */
+.wk-brand { --wm: clamp(26px, 2.9vw, 36px); }
+.wk-brand-mosq {
   display: block;
-  height: clamp(48px, 5.4vw, 66px);
-  width: auto;
-  max-width: 50vw;
+  width: calc(var(--wm) * 2.35); height: auto;
+  margin: calc(var(--wm) * -0.62) calc(var(--wm) * -0.6) calc(var(--wm) * -0.5) calc(var(--wm) * -0.55);
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, .95));
+}
+.wk-brand-word {
+  font-family: "Amatic SC", "Poppins", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: var(--wm);
+  line-height: 1;
+  letter-spacing: .1em;
+  color: var(--wk-on-dark);
 }
 
 .wk-menu {

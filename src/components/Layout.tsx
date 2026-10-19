@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { NAV_GROUPS, NAV_ORDER, PAGES, neighbours } from "../pages";
 import { Mosquito } from "./Mosquito";
-import brandLogo from "../assets/brand-logo.png";
 import { NavIcon } from "./NavIcons";
 import "./layout.css";
 
@@ -74,9 +73,10 @@ export function Layout() {
 
       <header className={`wk-nav${solid ? " is-solid" : ""}${open ? " is-open" : ""}`}>
         <div className="wk-nav-in">
-          {/* The team's banner, as supplied: the mosquito that stands in for the M of MOSKATEER. */}
+          {/* The mosquito that stands in for the M of MOSKATEER, then OSKATEER as live text. */}
           <Link to="/" className="wk-brand" aria-label="MOSKATEER, home">
-            <img className="wk-brand-logo" src={brandLogo} alt="MOSKATEER" width="1110" height="414" />
+            <img className="wk-brand-mosq" src="https://static.igem.wiki/teams/6506/wiki/mosquito/mosquito-wing-flap.webp" alt="" aria-hidden="true" width="768" height="512" />
+            <span className="wk-brand-word" aria-hidden="true">OSKATEER</span>
           </Link>
 
           <button

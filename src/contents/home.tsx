@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { Link } from "react-router-dom";
 import { LowPoly } from "../components/LowPoly";
+import { NavIcon, type NavIconName } from "../components/NavIcons";
 import { COUNTRIES, MAP_H, MAP_W, PINS } from "./home-map";
 import { FIGURES, MOSQUITO } from "./home-figures";
 import BANNER from "../../assets/home-banner.png";
-import BRAND from "../assets/brand-logo.png";
 import LOGO_SLIDE from "../../assets/home-logo-slide.png";
 import "./home.css";
 
@@ -171,6 +172,9 @@ function Symbols() {
 
 /* ---------- hero ---------- */
 
+/** The flapping mosquito that stands in for the M; uploaded to the team's static.igem.wiki folder. */
+const MOSQUITO_FLY = "https://static.igem.wiki/teams/6506/wiki/mosquito/mosquito-wing-flap.webp";
+
 /**
  * The banner, rebuilt as a full-height hero: the same faceted green field, the
  * same wordmark, tagline and mosquito, set out as a title page rather than a
@@ -182,8 +186,9 @@ function Hero() {
       <div className="hm-hero-bg" style={{ backgroundImage: `url(${BANNER})` }} aria-hidden="true" />
       <LowPoly className="hm-fill hm-hero-poly" colors={HERO_COLORS} cell={110} drift={5} glow seed={11} />
       <div className="hm-hero-in">
-        <h1 className="hm-hero-word">
-          <img src={BRAND} alt="MOSKATEER" width="1110" height="426" />
+        <h1 className="hm-hero-word" aria-label="MOSKATEER">
+          <img className="hm-hero-mosq" src={MOSQUITO_FLY} alt="" aria-hidden="true" width="768" height="512" />
+          <span className="hm-hero-letters" aria-hidden="true">OSKATEER</span>
         </h1>
         <p className="hm-hero-tag">Engineered Paratransgenic Symbionts for Sustainable Malaria Control</p>
       </div>
@@ -357,10 +362,9 @@ interface Step {
 }
 
 function Scrolly({
-  id, part, title, tone, band, steps, stage, onSp,
+  id, title, tone, band, steps, stage, onSp,
 }: {
   id: string;
-  part: string;
   title: string;
   tone: "paper" | "mist" | "night";
   band: "mist" | "paper" | "dark" | "teal";
@@ -374,7 +378,6 @@ function Scrolly({
   return (
     <section ref={ref} className={`hm-band hm-band--${band} hm-scrolly hm-${tone}`} id={id} aria-labelledby={`${id}-title`}>
       <header className="hm-part-head" data-reveal>
-        <p className="hm-kicker">{part}</p>
         <h2 id={`${id}-title`} className="hm-part-title">{title}</h2>
       </header>
       <div className="hm-sc-grid">
@@ -655,28 +658,89 @@ function Chain() {
 
 /* ---------- explore the wiki ---------- */
 
-const EXPLORE: { title: string; href: string; icon: string }[] = [
-  { title: "Project Description", href: "/description", icon: "icProject" },
-  { title: "Human Practices", href: "/human-practices", icon: "icPractices" },
-  { title: "Team", href: "/team", icon: "icTeam" },
+const EXPLORE_COLORS = ["#0f4a3f", "#1d715f", "#14505e", "#123a52", "#1f6a52", "#0b3029"];
+
+/** The page a reader should open first, set large beside four more. */
+const EXPLORE_MAIN = {
+  title: "Project Description",
+  href: "/description",
+  icon: "icProject",
+  lead: "The problem we picked, the whole MOSKATEER chain, and the biology that makes it work.",
+};
+
+const EXPLORE_CARDS: { title: string; href: string; icon: string; lead: string }[] = [
+  { title: "Human Practices", href: "/human-practices", icon: "icPractices", lead: "Who we asked, and what changed." },
+  { title: "Team", href: "/team", icon: "icTeam", lead: "The people behind MOSKATEER." },
 ];
+
+const EXPLORE_LAB: { title: string; href: string; icon: NavIconName; lead: string }[] = [
+  { title: "Experiments", href: "/experiments", icon: "tubes", lead: "Every protocol, as run." },
+  { title: "Results", href: "/results", icon: "chart", lead: "What the data showed." },
+];
+
+const EXPLORE_MORE: { title: string; href: string; icon: NavIconName }[] = [
+  { title: "Modelling", href: "/model", icon: "nodes" },
+  { title: "Biosafety", href: "/safety", icon: "shield" },
+  { title: "Notebook", href: "/notebook", icon: "notebook" },
+  { title: "Education", href: "/education", icon: "cap" },
+  { title: "Sustainability", href: "/sustainability", icon: "leaf" },
+  { title: "Gallery", href: "/gallery", icon: "images" },
+];
+
+function Arrow({ className }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
+}
 
 function Explore() {
   const ref = useRef<HTMLElement>(null);
   useReveal(ref);
+  const d = (i: number) => ({ "--i": i } as CSSProperties);
   return (
-    <section ref={ref} className="hm-band hm-band--paper hm-explore" id="explore" aria-labelledby="hm-ex-title">
-      <header className="hm-part-head" data-reveal>
-        <h2 id="hm-ex-title" className="hm-part-title">Dive deeper</h2>
-      </header>
-      <div className="hm-cards">
-        {EXPLORE.map((c, i) => (
-          <a key={c.title} href={c.href} className="hm-card" data-reveal style={{ "--i": i } as CSSProperties}>
-            <Fig name={c.icon} className="hm-card-fig" />
-            <h3>{c.title}</h3>
-            <svg className="hm-card-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-          </a>
-        ))}
+    <section ref={ref} className="hm-band hm-band--dark hm-explore" id="explore" aria-labelledby="hm-ex-title">
+      <LowPoly className="hm-fill hm-ex-poly" colors={EXPLORE_COLORS} cell={150} drift={3} seed={23} />
+      <div className="hm-inner">
+        <header className="hm-part-head hm-ex-head" data-reveal>
+          <h2 id="hm-ex-title" className="hm-part-title">Dive deeper</h2>
+          <p>Start with the project itself, or jump to the people, the lab work and the rest of the wiki.</p>
+        </header>
+        <div className="hm-ex-grid">
+          <Link to={EXPLORE_MAIN.href} className="hm-ex-main" data-reveal style={d(0)}>
+            <Fig name={EXPLORE_MAIN.icon} className="hm-ex-fig" />
+            <div>
+              <h3>{EXPLORE_MAIN.title}</h3>
+              <p>{EXPLORE_MAIN.lead}</p>
+            </div>
+            <Arrow className="hm-ex-go" />
+          </Link>
+          {EXPLORE_CARDS.map((c, i) => (
+            <Link key={c.title} to={c.href} className="hm-ex-card" data-reveal style={d(i + 1)}>
+              <Fig name={c.icon} className="hm-ex-icon" />
+              <h3>{c.title}</h3>
+              <p>{c.lead}</p>
+              <Arrow className="hm-ex-go" />
+            </Link>
+          ))}
+          {EXPLORE_LAB.map((c, i) => (
+            <Link key={c.title} to={c.href} className="hm-ex-lab" data-reveal style={d(i + 3)}>
+              <NavIcon name={c.icon} className="hm-ex-navicon" />
+              <span>
+                <h3>{c.title}</h3>
+                <p>{c.lead}</p>
+              </span>
+              <Arrow className="hm-ex-go" />
+            </Link>
+          ))}
+        </div>
+        <ul className="hm-ex-more" aria-label="More pages">
+          {EXPLORE_MORE.map((c, i) => (
+            <li key={c.title} data-reveal style={d(i + 5)}>
+              <Link to={c.href}>
+                <NavIcon name={c.icon} />
+                {c.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -770,7 +834,6 @@ export function Home() {
         <Numbers />
         <Scrolly
           id="molecule"
-          part="Part 1"
           title="The Molecule: Switching It Off"
           tone="mist"
           band="mist"
@@ -779,7 +842,6 @@ export function Home() {
         />
         <Scrolly
           id="sugar-trap"
-          part="Part 2"
           title="The Sugar Trap: Getting It There"
           tone="paper"
           band="paper"
@@ -789,7 +851,6 @@ export function Home() {
         />
         <Scrolly
           id="bigger-picture"
-          part="Part 3"
           title="Beyond One Mosquito: The Bigger Picture"
           tone="mist"
           band="mist"

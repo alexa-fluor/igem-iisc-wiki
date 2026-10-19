@@ -192,18 +192,47 @@
   text-align: center;
   padding: calc(var(--wk-nav-h, 72px) + 4vh) var(--gutter) 2vh;
 }
-/* the banner's own wordmark: the mosquito standing in for the M, and OSKATEER */
-.hm-page .hm-hero-word { margin: 0; line-height: 0; }
-.hm-page .hm-hero-word img {
-  display: block;
-  width: min(84vw, 980px);
-  height: auto;
-  margin: 0 auto;
-  filter: drop-shadow(0 18px 44px rgba(7, 38, 32, 0.34));
+/* the wordmark as live text: the mosquito stands in for the M, then OSKATEER in Amatic SC.
+   Real type, so it stays sharp at any size; the mosquito is the team's own animated artwork. */
+.hm-page .hm-hero-word {
+  --wm: clamp(76px, 14.5vw, 214px);
+  margin: 0;
+  display: flex; align-items: flex-end; justify-content: center;
+  line-height: 1;
+  filter: drop-shadow(0 14px 36px rgba(7, 38, 32, 0.38));
 }
+.hm-hero-mosq {
+  display: block;
+  /* the artwork carries empty margin; pull it in so the body sits where the M would */
+  width: calc(var(--wm) * 2.35); height: auto;
+  margin: calc(var(--wm) * -0.58) calc(var(--wm) * -0.62) calc(var(--wm) * -0.46) calc(var(--wm) * -0.55);
+  /* a pale halo keeps the dark legs and body readable on the green field */
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 14px rgba(231, 243, 238, 0.45));
+  animation: hm-mosq-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hm-hero-letters {
+  font-family: "Amatic SC", "Poppins", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: var(--wm);
+  line-height: 0.82;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f4faf6;
+  padding-bottom: calc(var(--wm) * 0.06);
+  animation: hm-letters-in 1.1s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes hm-mosq-in {
+  from { opacity: 0; transform: translate(-22vw, -10vh) scale(1.18); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hm-letters-in {
+  from { opacity: 0; transform: translateX(-24px); letter-spacing: 0.02em; }
+  to { opacity: 1; transform: none; letter-spacing: 0.1em; }
+}
+.hm-reduce .hm-hero-mosq, .hm-reduce .hm-hero-letters { animation: none; }
 /* the tagline as the banner sets it: Poppins light, one line across the page */
 .hm-page .hm-hero-tag {
-  margin: clamp(14px, 2.2vh, 30px) auto 0;
+  margin: clamp(30px, 4.4vh, 56px) auto 0;
   max-width: none;
   text-align: center;
   font: 300 clamp(15px, 2.5vw, 38px)/1.3 "Poppins", var(--body);
@@ -559,24 +588,77 @@
 .hm-chain-bar i { position: absolute; inset: 0; border-radius: 2px; background: var(--rust); transform-origin: 0 50%; transform: scaleX(var(--q)); }
 
 /* ---------- explore ---------- */
-.hm-cards {
-  max-width: 1320px; margin: 0 auto; padding: 0 var(--gutter);
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+.hm-explore { overflow: hidden; }
+.hm-ex-poly { z-index: -1; opacity: 0.5; }
+.hm-ex-head { margin-bottom: 5vh; padding: 0; color: var(--on-dark); }
+.hm-ex-head p { max-width: 38em; margin-top: 12px; color: var(--on-dark-muted); }
+.hm-ex-grid {
+  display: grid; gap: 18px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto;
 }
-.hm-card {
-  position: relative; display: flex; flex-direction: column; align-items: flex-start; min-height: 190px; padding: 20px 24px 54px;
-  border-radius: 20px; background: var(--mist); color: var(--ink) !important;
-  box-shadow: inset 0 0 0 1px rgba(23, 50, 43, 0.08);
-  transition: background 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
+.hm-ex-grid > a {
+  position: relative; display: flex; text-decoration: none; border-radius: 22px;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s, color 0.3s, opacity 0.6s calc(var(--i) * 70ms), translate 0.6s calc(var(--i) * 70ms);
 }
-.hm-card[data-reveal] { opacity: 0; translate: 0 30px; transition: background 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s, opacity 0.6s calc(var(--i) * 70ms), translate 0.6s calc(var(--i) * 70ms); }
-.hm-card.in { opacity: 1; translate: 0 0; }
-.hm-card:hover, .hm-card:focus-visible { background: var(--teal); color: var(--cream) !important; transform: translateY(-4px); box-shadow: 0 24px 40px -24px rgba(6, 40, 33, 0.6); }
-.hm-card-fig { width: 128px; height: 128px; display: block; margin-bottom: 4px; }
-.hm-card h3 { font: 700 clamp(22px, 2vw, 28px)/1.2 var(--display) !important; letter-spacing: -0.015em; color: inherit !important; margin: 6px 0 0 !important; }
-.hm-card p { font-size: var(--fs-small); line-height: var(--lh-small); opacity: 0.85; }
-.hm-card-go { position: absolute; left: 24px; bottom: 20px; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; transition: translate 0.3s; }
-.hm-card:hover .hm-card-go { translate: 6px 0; }
+.hm-ex-grid > a[data-reveal], .hm-ex-more li[data-reveal] { opacity: 0; translate: 0 30px; }
+.hm-ex-grid > a.in, .hm-ex-more li.in { opacity: 1; translate: 0 0; }
+.hm-ex-grid > a:hover, .hm-ex-grid > a:focus-visible { transform: translateY(-5px); box-shadow: 0 28px 44px -26px rgba(2, 20, 16, 0.75); }
+.hm-ex-grid h3 { margin: 0 !important; color: inherit !important; font: 700 clamp(22px, 2vw, 30px)/1.2 var(--display) !important; letter-spacing: -0.015em; }
+.hm-ex-grid p { margin: 8px 0 0 !important; font-size: var(--fs-small); line-height: var(--lh-small); }
+.hm-ex-go { position: absolute; right: 22px; bottom: 20px; width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; transition: translate 0.3s; }
+.hm-ex-grid > a:hover .hm-ex-go { translate: 6px 0; }
+
+/* the main card: large, on the team's teal facets */
+.hm-ex-main {
+  grid-column: 1 / 3; grid-row: 1 / 3;
+  flex-direction: column; justify-content: space-between; gap: 18px;
+  min-height: 420px; padding: 30px 32px 64px;
+  color: var(--cream) !important;
+  background: linear-gradient(150deg, var(--teal), #14505e 70%);
+  box-shadow: inset 0 0 0 1px rgba(231, 243, 238, 0.18);
+}
+.hm-ex-main h3 { font-size: clamp(28px, 3vw, 44px) !important; }
+.hm-ex-main p { color: var(--on-dark); font-size: var(--fs-body); line-height: var(--lh-body); max-width: 24em; }
+.hm-ex-fig { width: min(260px, 55%); aspect-ratio: 1; height: auto; display: block; }
+.hm-ex-main:hover { background: linear-gradient(150deg, #23826d, var(--teal) 70%); }
+
+/* the two illustrated cards */
+.hm-ex-card {
+  flex-direction: column; align-items: flex-start; min-height: 200px; padding: 22px 24px 62px;
+  background: var(--mist); color: var(--ink) !important;
+  box-shadow: inset 0 0 0 1px rgba(23, 50, 43, 0.1);
+}
+.hm-ex-card p { color: var(--muted); }
+.hm-ex-icon { width: 96px; height: 96px; display: block; margin-bottom: 8px; }
+.hm-ex-card:hover { background: var(--cream); }
+
+/* the two lab cards, flat and wide */
+.hm-ex-lab {
+  align-items: center; gap: 16px; min-height: 130px; padding: 20px 56px 20px 22px;
+  background: rgba(231, 243, 238, 0.08); color: var(--on-dark) !important;
+  box-shadow: inset 0 0 0 1px rgba(231, 243, 238, 0.22);
+  backdrop-filter: blur(4px);
+}
+.hm-ex-lab p { color: var(--on-dark-muted); }
+.hm-ex-lab h3 { font-size: clamp(20px, 1.8vw, 26px) !important; }
+.hm-ex-navicon { flex: none; width: 46px; height: 46px; padding: 10px; border-radius: 14px; background: rgba(231, 243, 238, 0.14); color: var(--cream); }
+.hm-ex-lab .hm-ex-go { bottom: 50%; margin-bottom: -12px; }
+.hm-ex-lab:hover { background: var(--cream); color: var(--ink) !important; }
+.hm-ex-lab:hover p { color: var(--muted); }
+.hm-ex-lab:hover .hm-ex-navicon { background: var(--pine); color: var(--cream); }
+
+/* the rest of the wiki, as pills */
+.hm-ex-more { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 12px; }
+.hm-ex-more li { transition: opacity 0.6s calc(var(--i) * 60ms), translate 0.6s calc(var(--i) * 60ms); }
+.hm-ex-more a {
+  display: inline-flex; align-items: center; gap: 9px; padding: 10px 18px 10px 14px; border-radius: 999px; text-decoration: none;
+  font: 600 var(--fs-small)/1 var(--body); color: var(--on-dark) !important;
+  box-shadow: inset 0 0 0 1px rgba(231, 243, 238, 0.28); transition: background 0.25s, color 0.25s;
+}
+.hm-ex-more a svg { width: 20px; height: 20px; }
+.hm-ex-more a:hover, .hm-ex-more a:focus-visible { background: var(--cream); color: var(--ink) !important; }
+.hm-reduce .hm-ex-grid > a, .hm-reduce .hm-ex-more li { opacity: 1; translate: none; }
 
 /* ---------- tablet ---------- */
 @media (max-width: 1100px) {
@@ -615,4 +697,13 @@
 .hm-reduce .hm-wing, .hm-reduce .hm-plume, .hm-reduce .hm-pulse { animation: none; }
 @media (prefers-reduced-motion: reduce) {
   .hm-page *, .hm-page *::before, .hm-page *::after { transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+}
+
+@media (max-width: 1100px) {
+  .hm-ex-grid { grid-template-columns: repeat(2, 1fr); }
+  .hm-ex-main { grid-column: 1 / 3; grid-row: auto; min-height: 340px; }
+}
+@media (max-width: 640px) {
+  .hm-ex-grid { grid-template-columns: 1fr; }
+  .hm-ex-main { grid-column: auto; min-height: 300px; }
 }
