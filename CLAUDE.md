@@ -110,7 +110,7 @@ The GitHub repo (`origin` here) is a plain `git push origin main`; no token prom
 
 ## Where things stand
 
-Done: full revamp pushed to GitLab; images moved to static.igem.wiki; home hero and navbar wordmark are live text beside the animated mosquito; "Dive deeper" redesigned; Part 1/2/3 labels removed from the home page; numbers section is plain type on the facets; closing logo slide removed; card backdrops removed from the figures in "The Molecule" and "Beyond One Mosquito" (rule in `src/contents/home.css`, scoped to `#molecule` and `#bigger-picture`).
+Done: full revamp pushed to GitLab; images moved to static.igem.wiki; home hero and navbar wordmark are live text beside the animated mosquito; "Dive deeper" redesigned; Part 1/2/3 labels removed from the home page; numbers section is plain type on the facets; closing logo slide removed; home story order is now challenge, numbers, Sugar Trap, Molecule, Bigger Picture, chain, Dive deeper (order set in `Home()` in `src/contents/home.tsx`); card backdrops removed from the figures in "The Molecule" and "Beyond One Mosquito" (rule in `src/contents/home.css`, scoped to `#molecule` and `#bigger-picture`).
 
 Open:
 - Fonts still bundled; move them to static.igem.wiki (above).

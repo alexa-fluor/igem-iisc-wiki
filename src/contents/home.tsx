@@ -807,14 +807,6 @@ export function Home() {
         <Challenge />
         <Numbers />
         <Scrolly
-          id="molecule"
-          title="The Molecule: Switching It Off"
-          tone="mist"
-          band="mist"
-          steps={MOL_STEPS}
-          stage={(s) => <MoleculeStage step={s} />}
-        />
-        <Scrolly
           id="sugar-trap"
           title="The Sugar Trap: Getting It There"
           tone="paper"
@@ -822,6 +814,14 @@ export function Home() {
           steps={TRAP_STEPS}
           stage={(s) => <TrapStage step={s} />}
           onSp={trapSp}
+        />
+        <Scrolly
+          id="molecule"
+          title="The Molecule: Switching It Off"
+          tone="mist"
+          band="mist"
+          steps={MOL_STEPS}
+          stage={(s) => <MoleculeStage step={s} />}
         />
         <Scrolly
           id="bigger-picture"
