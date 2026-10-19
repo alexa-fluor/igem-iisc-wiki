@@ -127,14 +127,18 @@ export function WikiPage({
       els.forEach((e) => e.classList.add("is-in"));
       return;
     }
+    // An element counts as arrived once 8% of it shows, but never more than 8% of the screen:
+    // a section taller than about twelve screens could otherwise never reach 8% of itself
+    // on a short window, and would stay hidden.
     const io = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
-        if (en.isIntersecting) {
+        const need = Math.min(en.boundingClientRect.height * 0.08, window.innerHeight * 0.08);
+        if (en.isIntersecting && en.intersectionRect.height >= need) {
           en.target.classList.add("is-in");
           io.unobserve(en.target);
         }
       });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: [0, 0.005, 0.01, 0.02, 0.04, 0.08] });
     els.forEach((e) => io.observe(e));
     return () => io.disconnect();
   }, [sections]);

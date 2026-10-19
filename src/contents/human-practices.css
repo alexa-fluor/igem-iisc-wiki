@@ -1,0 +1,35 @@
+/* Human Practices: the article cards, the way back, and larger centred photographs. */
+
+/* ---- the cards on Integrated Human Practices ---- */
+.hp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: clamp(18px, 2.4vw, 30px); margin-top: clamp(8px, 2vw, 24px); text-align: left; }
+.wk-page .hp-card {
+  display: flex; flex-direction: column; overflow: hidden; border-radius: 22px;
+  background: #fff; color: var(--ink); text-decoration: none;
+  box-shadow: inset 0 0 0 1px rgba(23, 50, 43, 0.1), 0 24px 44px -34px rgba(6, 40, 33, 0.5);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.wk-page .hp-card:hover, .wk-page .hp-card:focus-visible {
+  transform: translateY(-5px);
+  box-shadow: inset 0 0 0 1px rgba(23, 50, 43, 0.1), 0 30px 46px -28px rgba(6, 40, 33, 0.6);
+}
+.hp-card-img { position: relative; aspect-ratio: 16 / 10; background: var(--pine); overflow: hidden; }
+/* the cards without a photograph carry a thinner strip of the wiki's facets */
+.hp-card-img.is-facet { aspect-ratio: 16 / 5; }
+/* faces sit in the upper part of these photographs, so crop from the top */
+.hp-card-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; display: block; }
+.hp-card-poly { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hp-card-body { display: flex; flex: 1; flex-direction: column; gap: 10px; padding: 20px 22px 22px; }
+.wk-page .wk-inner .hp-card h3 { margin: 0; font: 700 clamp(20px, 1.8vw, 26px)/1.2 var(--wk-title); font-feature-settings: "cv11" 1, "ss01" 1; color: var(--ink); }
+.wk-page .wk-inner .hp-card p { margin: 0; font-size: 0.8em; line-height: 1.5; color: var(--muted); max-width: none; text-align: left; }
+.hp-card-go { margin-top: auto; padding-top: 6px; font: 700 0.72em/1 var(--wk-title); letter-spacing: 0.04em; color: var(--teal); }
+.hp-card-go span { display: inline-block; transition: transform 0.3s; }
+.hp-card:hover .hp-card-go span { transform: translateX(5px); }
+
+/* ---- the way back, at the top of each article ---- */
+.wk-page .hp-back { display: inline-block; margin-top: 6px; font: 700 0.8em/1.2 var(--wk-title); letter-spacing: 0.02em; color: var(--teal); text-decoration: none; }
+.wk-page .hp-back:hover { text-decoration: underline; }
+
+/* ---- photographs: centred, and larger, because there are faces in them ---- */
+.wk-page.is-hp-article, .wk-page.is-public-engagement { --photo-h: clamp(220px, 30vw, 420px); }
+.wk-page.is-hp-article:not(.is-sideless) .wk-photos,
+.wk-page.is-public-engagement:not(.is-sideless) .wk-photos { justify-content: center; }

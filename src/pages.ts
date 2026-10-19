@@ -13,6 +13,9 @@ import { Parts } from "./contents/parts";
 import { Safety } from "./contents/safety";
 import { Ideation } from "./contents/ideation";
 import { HumanPractices } from "./contents/human-practices";
+import { PublicEngagement } from "./contents/public-engagement";
+import { CommunitySurvey } from "./contents/community-survey";
+import { ARTICLE_PAGES } from "./contents/expert-articles";
 import { Education } from "./contents/education";
 import { Communication } from "./contents/communication";
 import { Sustainability } from "./contents/sustainability";
@@ -107,7 +110,17 @@ export const PAGES: Page[] = [
     name: "Integrated Human Practices", title: "Integrated Human Practices",
     path: "/human-practices", component: HumanPractices,
     group: "Human Practices", icon: "people", tagline: "Who we asked, and what changed",
-    lead: "Clinicians, an institute visit and the experts who changed the design.",
+    lead: "The experts and stakeholders we spoke to, one article each.",
+  },
+  {
+    name: "Public Engagement", title: "Public Engagement", path: "/public-engagement", component: PublicEngagement,
+    group: "Human Practices", icon: "nodes", tagline: "AIIM, the quiz, the orientation",
+    lead: "AIIM at IIT Madras, the nationwide Sciastra quiz and the iGEM orientation.",
+  },
+  {
+    name: "Community Survey", title: "Community Survey", path: "/community-survey", component: CommunitySurvey,
+    group: "Human Practices", icon: "chart", tagline: "What people know and believe",
+    lead: "Two awareness surveys on malaria and on genetic approaches to mosquito control.",
   },
   {
     name: "Education", title: "Education", path: "/education", component: Education,
@@ -155,6 +168,9 @@ export const PAGES: Page[] = [
     name: "Attributions", title: "Attributions", path: "/attributions", component: Attributions, unlisted: true,
     lead: "Who did what, and who helped.",
   },
+
+  // One article per conversation on Integrated Human Practices, reached from its cards.
+  ...ARTICLE_PAGES,
 ];
 
 /** PAGES grouped for the navbar, in PAGES order, ungrouped pages first. */
