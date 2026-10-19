@@ -34,6 +34,9 @@ function useRouteSideEffects(mainRef: React.RefObject<HTMLElement | null>) {
  */
 const SHOW_FOOTER = true;
 
+/** Up to three items sit in one row; more are split into two even rows (4 as 2+2, 5 as 3+2, 6 as 3+3). */
+const panelColumns = (n: number) => (n <= 3 ? n : Math.ceil(n / 2));
+
 /**
  * A dropdown opens under its own label. If that would run past the edge of the
  * window (the groups near the right), nudge it left just far enough to fit.
@@ -117,7 +120,7 @@ export function Layout() {
                   <span className="wk-group-label">{g.group}</span>
                   {/* One row of items, each an icon, its page name and a line
                       under it — the panel Aadya gave as the reference. */}
-                  <div className="wk-panel" style={{ "--cols": g.pages.length } as CSSProperties}>
+                  <div className="wk-panel" style={{ "--cols": panelColumns(g.pages.length) } as CSSProperties}>
                     {g.pages.map((p) => (
                       <NavLink key={p.path} to={p.path} className="wk-panel-item">
                         {p.icon && <NavIcon name={p.icon} className="wk-panel-icon" />}

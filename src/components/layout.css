@@ -122,8 +122,8 @@
 .wk-panel {
   position: absolute;
   top: calc(100% + 10px);
-  left: -22px;
-  transform: translate(var(--shift, 0px), -6px);
+  left: calc(-22px + var(--shift, 0px));
+  transform: translateY(-6px);
   padding: 20px 22px;
   max-width: calc(100vw - 40px);
   display: grid;
@@ -140,13 +140,9 @@
 .wk-group:focus-within .wk-panel {
   opacity: 1;
   visibility: visible;
-  transform: translate(var(--shift, 0px), 0);
+  transform: translateY(0);
 }
 
-/* below this the widest panel no longer fits on one line, so it wraps */
-@media (max-width: 1400px) {
-  .wk-panel { grid-template-columns: repeat(min(var(--cols, 2), 3), max-content); }
-}
 .wk-panel-item {
   display: flex;
   align-items: center;
