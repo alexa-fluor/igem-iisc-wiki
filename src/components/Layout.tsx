@@ -32,7 +32,22 @@ function useRouteSideEffects(mainRef: React.RefObject<HTMLElement | null>) {
  * for now, at Aadya's request; she will say what goes there. Set to true to
  * restore it unchanged.
  */
-const SHOW_FOOTER = false;
+const SHOW_FOOTER = true;
+
+/**
+ * A dropdown opens under its own label. If that would run past the edge of the
+ * window (the groups near the right), nudge it left just far enough to fit.
+ */
+function keepPanelOnScreen(e: React.SyntheticEvent<HTMLDivElement>) {
+  const group = e.currentTarget;
+  const panel = group.querySelector<HTMLElement>(".wk-panel");
+  if (!panel) return;
+  const edge = 16;
+  // where the panel sits before any nudge: the group's left edge plus the panel's own offset
+  const left = group.getBoundingClientRect().left + panel.offsetLeft;
+  const shift = Math.min(0, window.innerWidth - edge - (left + panel.offsetWidth));
+  panel.style.setProperty("--shift", `${Math.max(shift, edge - left).toFixed(0)}px`);
+}
 
 export function Layout() {
   const mainRef = useRef<HTMLElement>(null);
@@ -98,7 +113,7 @@ export function Layout() {
               }
               const g = NAV_GROUPS.find((x) => x.group === item.group)!;
               return (
-                <div className="wk-group" key={g.group}>
+                <div className="wk-group" key={g.group} onMouseEnter={keepPanelOnScreen} onFocus={keepPanelOnScreen}>
                   <span className="wk-group-label">{g.group}</span>
                   {/* One row of items, each an icon, its page name and a line
                       under it — the panel Aadya gave as the reference. */}
@@ -126,7 +141,8 @@ export function Layout() {
 
       {SHOW_FOOTER && (
       <footer className="wk-foot">
-        {(prev || next) && (
+        
+        {/*(prev || next) && (
           <nav className="wk-updown" aria-label="Previous and next page">
             {prev ? (
               <Link to={prev.path} className="wk-updown-card">
@@ -143,7 +159,9 @@ export function Layout() {
               </Link>
             )}
           </nav>
-        )}
+        )*/}
+
+        
 
         <div className="wk-foot-in">
           <div className="wk-foot-about">
@@ -171,8 +189,9 @@ export function Layout() {
         </div>
 
         <p className="wk-foot-legal">
-          Content on this wiki is the work of the IISc Bengaluru iGEM team unless
-          credited otherwise on the Attributions page.
+          © 2026 - Content on this site is licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International license</a>.
+          <br />
+          The repository used to create this website is available at <a href="https://gitlab.igem.org/2026/iisc-bengaluru">gitlab.igem.org/2026/iisc-bengaluru</a>.
         </p>
       </footer>
       )}

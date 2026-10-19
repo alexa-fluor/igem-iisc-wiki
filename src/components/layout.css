@@ -91,9 +91,9 @@
 .wk-link.active::after { transform: scaleX(1); }
 
 /* A group is a hover-open dropdown on wide screens. */
-/* The panel is positioned against the navbar's inner container, not the group,
-   so a wide one stays inside the page however near the right the group sits. */
-.wk-group { position: static; display: flex; align-items: center; }
+/* The panel opens under its own label; Layout.tsx nudges it (--shift) when it
+   would otherwise run past the edge of the window. */
+.wk-group { position: relative; display: flex; align-items: center; }
 .wk-group-label {
   display: inline-flex;
   align-items: center;
@@ -122,8 +122,8 @@
 .wk-panel {
   position: absolute;
   top: calc(100% + 10px);
-  right: 0;
-  transform: translateY(-6px);
+  left: -22px;
+  transform: translate(var(--shift, 0px), -6px);
   padding: 20px 22px;
   max-width: calc(100vw - 40px);
   display: grid;
@@ -140,7 +140,7 @@
 .wk-group:focus-within .wk-panel {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translate(var(--shift, 0px), 0);
 }
 
 /* below this the widest panel no longer fits on one line, so it wraps */
@@ -294,6 +294,8 @@
 .wk-updown-name { font: 700 1em/1.25 var(--wk-title); font-feature-settings: "cv11" 1, "ss01" 1; }
 .wk-updown-lead { font-size: .7em; color: var(--wk-on-dark-muted); }
 
+/*
+UNCOMMENT THIS BACK IN FOR THE ORIGINAL FOOTER STYLING
 .wk-foot-in {
   max-width: 1500px;
   margin: 0 auto;
@@ -302,6 +304,19 @@
   grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr));
   gap: 32px;
 }
+AND COMMENT OUT THE BLOCK JUST FOLLOWING THIS ONE
+*/
+
+.wk-foot-in {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 40px clamp(16px, 3vw, 32px) 24px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+
 .wk-foot-title {
   display: flex;
   align-items: center;

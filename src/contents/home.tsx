@@ -64,7 +64,18 @@ const seg = (p: number, a: number, b: number) => clamp01((p - a) / (b - a));
  * Progress through a tall pinned section: 0 when its top is 35% down the
  * viewport, 1 when its sticky stage is about to scroll away. Written to --p.
  */
-function usePin(ref: RefObject<HTMLElement | null>, onP?: (p: number, el: HTMLElement) => void, leadFrac = 0.35) {
+function usePin(
+  ref: RefObject<HTMLElement | null>,
+  onP?: (p: number, el: HTMLElement) => void,
+  leadFrac = 0.35,
+  smooth = false,
+) {
+  // `smooth` lets the progress glide to where the scroll position says it should be, so a
+  // notched mouse wheel does not make the section jump in steps
+  const cur = useRef<number | null>(null);
+  const target = useRef(0);
+  const raf = useRef(0);
+  useEffect(() => () => cancelAnimationFrame(raf.current), []);
   useFrame(() => {
     const el = ref.current;
     if (!el) return;
@@ -74,8 +85,29 @@ function usePin(ref: RefObject<HTMLElement | null>, onP?: (p: number, el: HTMLEl
     const span = r.height - vh;
     // a section that is not pinned (phones) reveals as it scrolls through the viewport instead
     const p = span > vh * 0.1 ? clamp01((lead - r.top) / (span + lead)) : clamp01((vh * 0.85 - r.top) / (r.height * 0.75));
-    el.style.setProperty("--p", p.toFixed(4));
-    onP?.(p, el);
+    const apply = (v: number) => {
+      el.style.setProperty("--p", v.toFixed(4));
+      onP?.(v, el);
+    };
+    if (!smooth || reducedMotion() || cur.current === null) {
+      cur.current = p;
+      apply(p);
+      return;
+    }
+    target.current = p;
+    if (raf.current) return;
+    const step = () => {
+      const d = target.current - (cur.current ?? 0);
+      if (Math.abs(d) < 0.0005) {
+        cur.current = target.current;
+        raf.current = 0;
+      } else {
+        cur.current = (cur.current ?? 0) + d * 0.16;
+        raf.current = requestAnimationFrame(step);
+      }
+      apply(cur.current);
+    };
+    raf.current = requestAnimationFrame(step);
   });
 }
 
@@ -218,7 +250,7 @@ function Challenge() {
     for (let t = 4; t >= 1; t--) if (p >= TIER_AT[t]) lvl = 5 - t;
     m.dataset.lvl = String(lvl);
     m.classList.toggle("pins", p > 0.7);
-  }, 1);
+  }, 1, true);
   // if the text is taller than the screen (short laptop screens, large text), stop pinning so nothing is cut off
   useEffect(() => {
     const el = ref.current;
@@ -226,7 +258,8 @@ function Challenge() {
     if (!el || !text) return;
     const check = () => {
       el.classList.remove("hm-loose");
-      el.classList.toggle("hm-loose", text.scrollHeight + 64 > window.innerHeight);
+      const top = parseFloat(getComputedStyle(el.querySelector(".hm-ch-grid")!).paddingTop) || 0;
+      el.classList.toggle("hm-loose", text.scrollHeight + top + 48 > window.innerHeight);
       onScroll();
     };
     const ro = new ResizeObserver(check);
@@ -301,7 +334,7 @@ const NUM_COLORS = ["#0f4a3f", "#14505e", "#1d715f", "#123a52", "#1f6a52", "#0b3
  */
 function Numbers() {
   const ref = useRef<HTMLElement>(null);
-  usePin(ref);
+  usePin(ref, undefined, 0.35, true);
   return (
     <section ref={ref} className="hm-band hm-band--dark hm-pin hm-numbers" id="numbers" aria-labelledby="hm-num-title">
       <div className="hm-sticky">
@@ -586,7 +619,7 @@ function SpreadStage({ step }: { step: number }) {
   );
 }
 
-/* ---------- the whole chain, end to end (sideways strip) ---------- */
+/* ---------- the whole chain, end to end (a ring that lights up as you scroll) ---------- */
 
 const CHAIN: { title: string; icon: string }[] = [
   { title: "One trap", icon: "icTrap" },
@@ -595,35 +628,68 @@ const CHAIN: { title: string; icon: string }[] = [
   { title: "Downward", icon: "icDownward" },
 ];
 
+/* The ring is drawn in a 100 x 100 box. The links sit at 12, 3, 6 and 9 o'clock and an
+   arrow runs clockwise from each to the next, stopping short of the cards. */
+const RING_R = 36;
+const ARC_GAP = 28;
+const ringPoint = (deg: number) => {
+  const a = (deg * Math.PI) / 180;
+  return { x: 50 + RING_R * Math.cos(a), y: 50 + RING_R * Math.sin(a) };
+};
+const NODE_DEG = [-90, 0, 90, 180];
+const ARCS = NODE_DEG.map((deg) => {
+  const from = ringPoint(deg + ARC_GAP);
+  const to = ringPoint(deg + 90 - ARC_GAP);
+  return {
+    d: `M${from.x.toFixed(2)} ${from.y.toFixed(2)} A${RING_R} ${RING_R} 0 0 1 ${to.x.toFixed(2)} ${to.y.toFixed(2)}`,
+    head: `translate(${to.x.toFixed(2)} ${to.y.toFixed(2)}) rotate(${deg + 90 - ARC_GAP + 90})`,
+  };
+});
+
 function Chain() {
   const ref = useRef<HTMLElement>(null);
-  const track = useRef<HTMLDivElement>(null);
+  const ring = useRef<HTMLDivElement>(null);
   usePin(ref, (p, el) => {
-    const t = track.current;
-    if (!t) return;
-    const travel = Math.max(0, t.scrollWidth - el.clientWidth);
-    const q = ease(seg(p, 0.08, 0.92));
-    t.style.transform = `translate3d(${(-travel * q).toFixed(1)}px,0,0)`;
-    el.style.setProperty("--q", q.toFixed(4));
-    t.querySelectorAll<HTMLElement>(".hm-link").forEach((c, i, all) => c.classList.toggle("on", q >= i / (all.length + 1) - 0.02));
-  });
+    const r = ring.current;
+    if (!r) return;
+    // one unit of t per arrow; the half unit at the end lets the closing line land before the summary shows
+    const t = seg(p, 0.24, 0.9) * (CHAIN.length + 0.5);
+    r.querySelectorAll<SVGPathElement>(".hm-arc-lit").forEach((a, i) => a.style.setProperty("--f", clamp01(t - i).toFixed(3)));
+    r.querySelectorAll(".hm-arc-head.lit").forEach((h, i) => h.classList.toggle("on", t - i >= 0.985));
+    r.querySelectorAll(".hm-ring-node").forEach((n, i) => n.classList.toggle("on", i === 0 || t >= i - 0.05));
+    el.classList.toggle("hm-done", t >= CHAIN.length);
+  }, 0.35, true);
   return (
     <section ref={ref} className="hm-band hm-band--teal hm-pin hm-chain" id="chain" aria-labelledby="hm-chain-title">
       <div className="hm-sticky">
-        <div className="hm-chain-bar" aria-hidden="true"><i /></div>
-        <div ref={track} className="hm-track">
+        <div className="hm-chain-grid">
           <div className="hm-chain-intro">
             <h2 id="hm-chain-title" className="hm-part-title">The whole chain</h2>
           </div>
-          {CHAIN.map((c) => (
-            <article key={c.title} className="hm-link">
-              <Fig name={c.icon} className="hm-link-fig" />
-              <h3>{c.title}</h3>
-            </article>
-          ))}
-          <article className="hm-link hm-link-final">
+          <div ref={ring} className="hm-ring">
+            <svg className="hm-ring-svg" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+              {ARCS.map((a, i) => (
+                <g key={i}>
+                  <path className="hm-arc" d={a.d} />
+                  <path className="hm-arc-head" d="M-4.4 -2.8 L0 0 L-4.4 2.8 Z" transform={a.head} />
+                  <path className="hm-arc-lit" d={a.d} pathLength={1} />
+                  <path className="hm-arc-head lit" d="M-4.4 -2.8 L0 0 L-4.4 2.8 Z" transform={a.head} />
+                </g>
+              ))}
+            </svg>
+            {CHAIN.map((c, i) => {
+              const at = ringPoint(NODE_DEG[i]);
+              return (
+                <article key={c.title} className="hm-ring-node" style={{ left: `${at.x}%`, top: `${at.y}%` }}>
+                  <Fig name={c.icon} className="hm-link-fig" />
+                  <h3>{c.title}</h3>
+                </article>
+              );
+            })}
+          </div>
+          <div className="hm-chain-final">
             <p>A single, field-deployable intervention that keeps working even after the trap is gone.</p>
-          </article>
+          </div>
         </div>
       </div>
     </section>

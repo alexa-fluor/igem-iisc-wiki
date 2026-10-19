@@ -67,7 +67,7 @@
 .hm-page a { color: inherit; text-decoration: none; }
 .hm-page mark { color: inherit; }
 /* every Inter heading uses the same feature settings as the other wiki pages */
-.hm-page h1, .hm-page h2, .hm-page h3, .hm-strip, .hm-link-final p { font-feature-settings: "cv11" 1, "ss01" 1; }
+.hm-page h1, .hm-page h2, .hm-page h3, .hm-strip, .hm-chain-final p { font-feature-settings: "cv11" 1, "ss01" 1; }
 .hm-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 .hm-fill { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
@@ -245,11 +245,11 @@
 }
 
 /* ---------- the global malaria challenge ---------- */
-.hm-challenge { height: 300vh; }
+.hm-challenge { height: 230vh; }
 .hm-ch-grid {
   height: 100%; max-width: 1400px; margin: 0 auto;
   padding: 0 var(--gutter);
-  display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 2.5vw; align-items: start; padding-top: 6vh;
+  display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 2.5vw; align-items: start; padding-top: calc(var(--wk-nav-h, 72px) + 3vh);
 }
 .hm-big {
   font: 800 clamp(34px, min(4.8vw, 8.5vh), 80px)/1.02 var(--title) !important;
@@ -264,7 +264,7 @@
   background: linear-gradient(transparent 58%, rgba(200, 67, 47, 0.24) 58%) no-repeat;
   background-size: calc(var(--h) * 100%) 100%;
 }
-.hm-map-wrap { position: relative; }
+.hm-map-wrap { position: relative; align-self: center; }
 .hm-map { width: 100%; height: auto; display: block; overflow: visible; }
 .hm-map path { fill: #e1edef; stroke: #26363b; stroke-width: 0.5; stroke-linejoin: round; transition: fill 0.9s ease; }
 .hm-map:is([data-lvl="1"], [data-lvl="2"], [data-lvl="3"], [data-lvl="4"]) .t4 { fill: #8e1b1b; }
@@ -290,11 +290,11 @@
 /* ---------- the numbers: a pinboard of torn paper ---------- */
 /* ---------- the disaster, in numbers ---------- */
 .hm-numbers {
-  height: 340vh; color: var(--on-dark);
+  height: 270vh; color: var(--on-dark);
   /* 0 while the card fills the screen, 1 once it has drawn back to its square */
   --s: clamp(0, (var(--p) - 0.30) * 3.2, 1);
   --w: clamp(0, (var(--p) - 0.62) * 3.6, 1);
-  --sq: min(78vh, 48vw);
+  --sq: min(66vh, 44vw);
   --gut: clamp(20px, 4vw, 56px);
 }
 .hm-num-stack { display: contents; }
@@ -310,7 +310,9 @@
   box-shadow: 0 30px 60px -30px rgba(4, 26, 21, calc(var(--s) * 0.8));
   display: grid; place-items: center;
   /* the card's type is set by the card's own width, so it fills it at any size */
-  font-size: calc((1 - var(--s)) * 13vw + var(--s) * var(--sq) * 0.132);
+  /* it is also capped by the screen's height, so both numbers fit on a short laptop screen */
+  font-size: calc((1 - var(--s)) * min(13vw, (100vh - var(--wk-nav-h, 72px) - 56px) / var(--rows, 4.3)) + var(--s) * var(--sq) * 0.132);
+  padding-top: calc((1 - var(--s)) * var(--wk-nav-h, 72px));
 }
 .hm-poster-rows { position: relative; z-index: 1; width: 94%; text-align: center; }
 .hm-strip {
@@ -326,7 +328,7 @@
 }
 .hm-strip-cap:last-child { margin-bottom: 0 !important; }
 .hm-poster-tape {
-  position: absolute; z-index: 1; top: 0.7em; left: 0.7em;
+  position: absolute; z-index: 1; top: calc(0.7em + (1 - var(--s)) * (var(--wk-nav-h, 72px) + 12px)); left: 0.7em;
   padding: 0.08em 0.7em 0.12em;
   border-radius: 999px;
   box-shadow: inset 0 0 0 0.05em rgba(231, 243, 238, 0.55);
@@ -548,24 +550,45 @@
 @keyframes hm-flap { to { scale: 1 0.5; } }
 
 /* ---------- the whole chain ---------- */
-.hm-chain { height: 400vh; --q: 0; }
+.hm-chain { height: 260vh; }
 .hm-chain .hm-sticky { display: flex; align-items: center; }
-.hm-track { display: flex; align-items: stretch; gap: 28px; width: max-content; padding: 0 calc(var(--gutter) + 24px) 0 var(--gutter); will-change: transform; }
-.hm-chain-intro { width: min(380px, 78vw); display: flex; flex-direction: column; justify-content: center; }
-.hm-link {
-  width: min(320px, 76vw); background: var(--paper); border-radius: 24px; padding: 24px 26px 26px;
-  box-shadow: 0 24px 50px -30px rgba(6, 40, 33, 0.45), inset 0 0 0 1px rgba(23, 50, 43, 0.08);
-  opacity: 0.3; transform: translateY(18px); transition: opacity 0.5s, transform 0.5s;
-  color: var(--ink);
+.hm-chain-grid {
+  --S: min(46vw, calc(100svh - var(--wk-nav-h, 72px) - 72px), 760px);
+  width: 100%; max-width: 1400px; margin: 0 auto;
+  padding: var(--wk-nav-h, 72px) var(--gutter) 0;
+  display: grid; grid-template-columns: minmax(0, 1fr) var(--S); grid-template-rows: 1fr 1fr;
+  column-gap: 4vw; align-items: center;
 }
-.hm-link.on { opacity: 1; transform: none; }
-.hm-link-fig { width: 150px; height: 150px; display: block; margin-bottom: 10px; overflow: visible; }
-.hm-link h3 { font: 700 clamp(24px, 2.2vw, 32px)/1.2 var(--display) !important; letter-spacing: -0.015em; color: var(--ink) !important; margin-bottom: 0 !important; }
-.hm-link p:last-child { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--muted); }
-.hm-link-final { background: var(--pine); display: flex; align-items: center; width: min(380px, 80vw); }
-.hm-link-final p:last-child { font: 700 clamp(24px, 2.2vw, 32px)/1.3 var(--display); letter-spacing: -0.015em; color: var(--cream); }
-.hm-chain-bar { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 9vh; height: 4px; border-radius: 2px; background: rgba(23, 50, 43, 0.12); }
-.hm-chain-bar i { position: absolute; inset: 0; border-radius: 2px; background: var(--rust); transform-origin: 0 50%; transform: scaleX(var(--q)); }
+.hm-chain-intro { grid-column: 1; grid-row: 1; align-self: end; padding-bottom: 14px; }
+.hm-chain-final {
+  grid-column: 1; grid-row: 2; align-self: start; max-width: 460px; padding: 22px 26px; border-radius: 22px; background: var(--pine);
+  opacity: 0; transform: translateY(14px); transition: opacity 0.6s, transform 0.6s;
+}
+.hm-chain.hm-done .hm-chain-final { opacity: 1; transform: none; }
+.hm-chain-final p { font: 700 clamp(20px, 2.2vw, 28px)/1.3 var(--display); letter-spacing: -0.015em; color: var(--cream); font-feature-settings: "cv11" 1, "ss01" 1; }
+
+/* the ring: a square, so the links keep their places at any width */
+.hm-ring { grid-column: 2; grid-row: 1 / 3; position: relative; width: var(--S); height: var(--S); }
+.hm-ring-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.hm-arc, .hm-arc-lit { fill: none; stroke-width: 1.1; }
+.hm-arc { stroke: rgba(231, 243, 238, 0.22); }
+.hm-arc-head { fill: rgba(231, 243, 238, 0.22); transition: opacity 0.3s; }
+.hm-arc-lit {
+  stroke: var(--cream); stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--f, 0));
+  filter: drop-shadow(0 0 5px rgba(255, 248, 207, 0.65));
+}
+.hm-arc-head.lit { fill: var(--cream); opacity: 0; filter: drop-shadow(0 0 5px rgba(255, 248, 207, 0.65)); }
+.hm-arc-head.lit.on { opacity: 1; }
+.hm-ring-node {
+  position: absolute; width: 27%; transform: translate(-50%, -50%) scale(0.94);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 3% 3% 4%; border-radius: calc(var(--S) * 0.035); background: var(--paper); color: var(--ink);
+  box-shadow: 0 24px 50px -30px rgba(6, 40, 33, 0.45), inset 0 0 0 1px rgba(23, 50, 43, 0.08);
+  opacity: 0.35; transition: opacity 0.5s, transform 0.5s, box-shadow 0.5s;
+}
+.hm-ring-node.on { opacity: 1; transform: translate(-50%, -50%); box-shadow: 0 0 0 3px rgba(255, 248, 207, 0.85), 0 24px 50px -30px rgba(6, 40, 33, 0.45); }
+.hm-link-fig { width: calc(var(--S) * 0.12); height: calc(var(--S) * 0.12); display: block; margin-bottom: calc(var(--S) * 0.008); overflow: visible; }
+.hm-ring-node h3 { font: 700 max(14px, calc(var(--S) * 0.04))/1.2 var(--display) !important; letter-spacing: -0.015em; color: var(--ink) !important; margin: 0 !important; }
 
 /* ---------- explore ---------- */
 .hm-explore { overflow: hidden; }
@@ -667,10 +690,15 @@
   }
   .hm-step-card { padding: 0 2px; transform: none; }
 
-  .hm-chain-bar { bottom: 6svh; }
+  .hm-chain-grid {
+    --S: min(90vw, calc(100svh - var(--wk-nav-h, 72px) - 250px));
+    grid-template-columns: 1fr; grid-template-rows: auto auto auto; row-gap: 14px; justify-items: center;
+  }
+  .hm-chain-intro { grid-column: 1; grid-row: 1; justify-self: start; padding-bottom: 0; }
+  .hm-ring { grid-column: 1; grid-row: 2; }
+  .hm-chain-final { grid-column: 1; grid-row: 3; align-self: auto; padding: 14px 18px; }
   .hm-cards { grid-template-columns: 1fr; }
   .hm-card-fig { width: 104px; height: 104px; }
-  .hm-link-fig { width: 116px; height: 116px; }
 }
 
 /* ---------- reduced motion: no looping animations; scroll still drives the story ---------- */
