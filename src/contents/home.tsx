@@ -5,7 +5,6 @@ import { NavIcon, type NavIconName } from "../components/NavIcons";
 import { COUNTRIES, MAP_H, MAP_W, PINS } from "./home-map";
 import { FIGURES, MOSQUITO } from "./home-figures";
 import BANNER from "../../assets/home-banner.png";
-import LOGO_SLIDE from "../../assets/home-logo-slide.png";
 import "./home.css";
 
 /*
@@ -291,17 +290,6 @@ function Challenge() {
 
 /* ---------- Act 1, panel 2: the disaster in numbers ---------- */
 
-/** Ragged edges for a torn sheet of paper, as a clip-path polygon. */
-function tornEdge(seed: number, amp = 1.6): string {
-  const r = rng(seed);
-  const n = 18;
-  const pts: string[] = [];
-  const x = (i: number) => ((i / n) * 100).toFixed(1);
-  for (let i = 0; i <= n; i++) pts.push(`${x(i)}% ${(r() * amp).toFixed(2)}%`);
-  for (let i = n; i >= 0; i--) pts.push(`${x(i)}% ${(100 - r() * amp).toFixed(2)}%`);
-  return `polygon(${pts.join(",")})`;
-}
-
 /* The faceted green-and-blue mosaic the team's own numbers card is built on. */
 const NUM_COLORS = ["#0f4a3f", "#14505e", "#1d715f", "#123a52", "#1f6a52", "#0b3029"];
 
@@ -320,11 +308,11 @@ function Numbers() {
         <div className="hm-num-stack">
           <figure className="hm-poster">
             <LowPoly className="hm-fill" colors={NUM_COLORS} cell={120} drift={4} seed={5} />
-            <figcaption className="hm-poster-tape" style={{ clipPath: tornEdge(41, 6) }}>2024</figcaption>
+            <figcaption className="hm-poster-tape">2024</figcaption>
             <div className="hm-poster-rows" aria-hidden="true">
-              <p className="hm-strip" style={{ clipPath: tornEdge(3) }}>282 million</p>
+              <p className="hm-strip">282 million</p>
               <p className="hm-strip-cap">malaria cases</p>
-              <p className="hm-strip" style={{ clipPath: tornEdge(11) }}>610,000</p>
+              <p className="hm-strip">610,000</p>
               <p className="hm-strip-cap">deaths</p>
             </div>
           </figure>
@@ -335,20 +323,6 @@ function Numbers() {
             <p>95% of them concentrated in the WHO African Region, where children under five accounted for roughly three out of every four deaths</p>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- the team's logo slide, after the solution ---------- */
-
-function LogoSlide() {
-  const ref = useRef<HTMLElement>(null);
-  usePin(ref);
-  return (
-    <section ref={ref} className="hm-band hm-band--slide hm-pin hm-logo-slide" id="solution" aria-label="MOSKATEER">
-      <div className="hm-sticky">
-        <img className="hm-logo-slide-img" src={LOGO_SLIDE} alt="MOSKATEER logo: the musketeer mosquito and the lettering OSKATEER over a mosquito wing, with the IISc and iGEM marks" />
       </div>
     </section>
   );
@@ -858,7 +832,6 @@ export function Home() {
           stage={(s) => <SpreadStage step={s} />}
         />
         <Chain />
-        <LogoSlide />
         <Explore />
       </main>
     </div>

@@ -42,14 +42,14 @@
 .wk-brand { --wm: clamp(26px, 2.9vw, 36px); }
 .wk-brand-mosq {
   display: block;
-  width: calc(var(--wm) * 2.35); height: auto;
-  margin: calc(var(--wm) * -0.62) calc(var(--wm) * -0.6) calc(var(--wm) * -0.5) calc(var(--wm) * -0.55);
+  width: calc(var(--wm) * 3.1); height: auto;
+  margin: calc(var(--wm) * -0.84) calc(var(--wm) * -0.8) calc(var(--wm) * -0.66) calc(var(--wm) * -0.74);
   filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, .95));
 }
 .wk-brand-word {
   font-family: "Amatic SC", "Poppins", system-ui, sans-serif;
   font-weight: 700;
-  font-size: var(--wm);
+  font-size: calc(var(--wm) * .74);
   line-height: 1;
   letter-spacing: .1em;
   color: var(--wk-on-dark);
