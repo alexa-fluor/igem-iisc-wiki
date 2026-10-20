@@ -118,9 +118,9 @@ The GitHub repo (`origin` here) is a plain `git push origin main`; no token prom
 - **Integrated Human Practices** (`/human-practices`): a card per expert/stakeholder conversation. Each card opens `/human-practices/<slug>` (text and photos in `expert-articles.tsx`, text exactly as the team sent it). Three of the five cards have no photo and show the wiki's facet strip; add `image` to an entry in `ARTICLES` when a photo exists.
 - **Public Engagement** (`/public-engagement`): AIIM, Sciastra Quiz, iGEM Orientation, as sections. **Community Survey** (`/community-survey`): the survey text and nine charts under three headings (charts are drawn from the Google Forms screenshots; two surveys of 61 and 93 responses, never merged).
 - **Education** (`/education`): a Read | Watch switch (`#read` / `#watch`). Read = nine cards to `/education/<slug>` articles (text word for word). Watch = the `VIDEOS` list in `education.tsx`: a thumbnail card per video. **iGEM requires wiki videos to be embedded from iGEM Video Universe (video.igem.org), never YouTube**, so a card is a plain link to the team's YouTube video until it has an `embed` (the `src` from the Share > Embed code of the video once uploaded to Video Universe); then it plays in place. To add a video: add a line to `VIDEOS` (the id is the part after `v=`), save its YouTube thumbnail (`https://img.youtube.com/vi/<id>/maxresdefault.jpg`) as `src/assets/education/<name>.jpg`, import it, and upload `education__<name>.jpg` to static.igem.wiki (see Images). Until uploaded, the card shows the facets instead.
-- **Team** (`/team`, `team.tsx`): the two PIs (Dr. Shantanu Shukla, Dr. Vishal Singh, names printed under their photos), then a **Team Members** grid of fifteen photo cards in alphabetical order by name (the file number of each original photo is kept in `file`). Hover lifts and tilts a card and the name rises over the photo; a click opens a pop-up in **iGEM's attributions format**: role, Tasks (tags such as Analysis, Wiki Coding, Public Engagement) and Specific Tasks written as "(1) Area – what they did; (2) ...". Names and roles are set (Team Leaders: Ryan Ray, Satwik Mahapatra, Srijan Agrawal, Yashwanth Seetharaman; everyone else Team Member). **Tasks and Specific Tasks still read "To be added."** until each person confirms them; never write them for someone. The team's own list may already be at `teams.igem.org/wiki/6506/attributions`. Names map to photos as the user gave them (row by row, then sorted alphabetically); photos are 480x600 face-centred crops.
-- **Gallery** (`/gallery`): Lab Work and Lab Fun sections; the whole-team group photo (`g17`) sits next to the courtyard shot (`g12`); `g14` (blue curtain selfie) was dropped from the page but its file remains. Image heights are fixed per row (`gallery.css`), which the user likes; do not tighten it.
-- **Notebook** (`/notebook`): a bound book you turn page by page (`notebook-book.tsx`), written in Patrick Hand (titles in Kalam); hand-drawn SVG doodles and sketch charts in `notebook-hand.tsx` (no data in them, only sketches); entries in `notebook-pages.tsx`, April to October, covering wet lab, dry lab, human practices, ideation, outreach and the wiki. **The entries are placeholders** (marked "draft entry" on every page; set `DRAFT = false` in `notebook.tsx` once they are the team's own notes). A page holds about 15 ruled lines; sizes are in `cqw`, so check each page for overflow after editing.
+- **Team** (`team.tsx`): cards open an attributions pop-up in iGEM's format (role, Tasks tags, Specific Tasks). Names and roles are set; **Tasks and Specific Tasks read "To be added." until each person confirms them. Never write them for anyone.** The team's own list may be at `teams.igem.org/wiki/6506/attributions`.
+- **Gallery** (`gallery.css`): the user likes the fixed-height, roomy photo rows; do not tighten them.
+- **Notebook** (`notebook*.tsx`, `notebook.css`): a bound, page-turning book in handwriting (Patrick Hand, titles Kalam). **The entries in `notebook-pages.tsx` are placeholders** (every page says "draft entry"); never present them as real. When the team's notes arrive, replace them and set `DRAFT = false` in `notebook.tsx`. Pages are sized in `cqw` and hold about 15 ruled lines: after editing text, check each page for overflow in the browser.
 - **Home** (`src/contents/home.tsx`): pinned scroll sections use `usePin`, which can ease toward the scroll position (`smooth`). "The whole chain" is a ring of four cards with clockwise arrows that light up as you scroll (`Chain`).
 - `WikiPage`'s reveal observer caps how much of a section must be visible at 8% of the screen. Without that, a section taller than about twelve screens never revealed on a short window and looked empty until you zoomed out.
 
@@ -143,15 +143,13 @@ This local repo is the GitHub copy; GitLab is what deploys. Their **commit hashe
 
 ## Where things stand
 
-Live on GitLab: Home changes, Human Practices restructure, two-row dropdowns, Soham's footer commits, the Education Read | Watch page (thumbnails uploaded and live), the Team page rework (Dr. prefix, Team Members, hover cards, attributions pop-up), the Gallery group photo, and the Notebook book (Patrick Hand / Kalam handwriting).
+Do not trust a status list here; check. At the start of a session:
 
-Ready but possibly not pushed yet: "Fonts: load from static.igem.wiki instead of the bundle" (the `@font-face` URLs in `src/global.css` now point at `https://static.igem.wiki/teams/6506/wiki/fonts/iisc/`; all eight files are uploaded and verified identical to `public/fonts/`). Check `git log origin/main` in a fresh GitLab clone to see.
+- `git log --oneline | head` here, and in a fresh GitLab clone `git log --oneline origin/main | head`, to see what is live and what is only here.
+- `curl -s https://2026.igem.wiki/iisc-bengaluru/ | grep -o 'assets/index-[^"]*'` for what is deployed.
+- `curl -s -o /dev/null -w '%{http_code}\n' <static.igem.wiki URL>` for any image or font a page needs (200 = uploaded).
 
-**Needs doing by the user / the team:**
-- **Notebook entries are placeholders.** Replace each entry in `notebook-pages.tsx` with the team's own notes, then set `DRAFT = false` in `notebook.tsx`. Dates and plans there are stand-ins; no results.
-- Team: Tasks and Specific Tasks for each person (see Site structure). PI attributions too.
-- Upload the videos to iGEM Video Universe and send the embed addresses; they go in `VIDEOS` as `embed`. Until then the Watch cards link to YouTube.
-- Three more videos were due on 20 Oct 2026: add them to `VIDEOS`.
+Things only the user can do (ask, do not assume done): upload new images and fonts to static.igem.wiki, push to GitLab, upload videos to iGEM Video Universe, supply the team's real notes, names and attributions.
 
 Open:
 - Parts and Software: Best Part Collection and Best Software Tool are being targeted. The Parts page exists but is `unlisted`; add it under Lab later. A Software page needs real facts about the tool (what it does, how to run it, repo, validation); do not invent them.
@@ -163,6 +161,5 @@ Open:
 - The navbar mosquito flaps constantly on every page; swap for a still image if that is distracting.
 - Label chips inside the Molecule and Bigger Picture figures still have their own coloured backgrounds; they are part of the drawings and were left alone on purpose.
 - Home chain: the fourth arrow ("Downward" back to "One trap") closes the ring; that is a design choice, drop it if the team prefers an open ring.
-- Notebook phone layout shows one page at a time; the hover/3D page turn was checked in the preview only at 1440 px and phone width.
 
 AI-use note: the GitLab repo has `.claude/RESPONSIBLE_AI_USE.md`. The team stays fully responsible for everything published.
