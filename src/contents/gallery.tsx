@@ -10,7 +10,6 @@ import g10 from "../assets/gallery/g10.jpg";
 import g11 from "../assets/gallery/g11.jpg";
 import g12 from "../assets/gallery/g12.jpg";
 import g13 from "../assets/gallery/g13.jpg";
-import g14 from "../assets/gallery/g14.jpg";
 import g15 from "../assets/gallery/g15.jpg";
 import g16 from "../assets/gallery/g16.jpg";
 import g17 from "../assets/gallery/g17.jpg";
@@ -59,7 +58,6 @@ const SECTIONS: WikiSection[] = [
           <figure data-reveal><img src={g12} alt="The team gathered in the courtyard" loading="lazy" /></figure>
           <figure data-reveal><img src={g17} alt="The whole team lined up in front of the old building" loading="lazy" /></figure>
           <figure data-reveal><img src={g13} alt="Two team members smiling in front of a blue curtain" loading="lazy" /></figure>
-          <figure data-reveal><img src={g14} alt="Two team members in the lab" loading="lazy" /></figure>
           <figure data-reveal><img src={g15} alt="Two team members in the lab" loading="lazy" /></figure>
           <figure data-reveal><img src={g16} alt="Three team members holding a blue box" loading="lazy" /></figure>
         </div>

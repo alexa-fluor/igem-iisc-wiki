@@ -30,3 +30,4 @@
 @media (max-width: 560px) { .tm-grid > div { width: calc(50% - 10px); } .tm-dialog { flex-direction: column; } .tm-dialog img { flex: none; width: 100%; } }
 @media (hover: none) { .tm-name { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .tm-card, .tm-name, .tm-modal, .tm-dialog { transition: none; animation: none; } }
+.tm-card--pi .tm-name { display: none; }

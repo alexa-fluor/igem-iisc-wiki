@@ -22,11 +22,11 @@ import "./team.css";
 /*
  * Team. Same layout as the Gallery: no navigator, one centred column.
  *
- * The Principal Investigators come first, each photograph above the name. The fourteen photographs follow, each cropped on the face and set in a
- * card of one size. Names are not supplied yet, so the cards carry none: fill in
- * `name` (and `attributions`) on a member below; the name rises over the photo on hover and
- * the role, task tags and specific tasks show in the pop-up that a click opens. `file` keeps the
- * original photograph's number so names can be matched to it.
+ * The Principal Investigators come first, each photograph above the name. The fifteen
+ * photographs follow in alphabetical order by name, each cropped on the face and set in a card
+ * of one size. The name rises over the photo on hover, and a click opens a pop-up with the
+ * role, task tags and specific tasks: fill in `tasks` and `specificTasks` on a member below once
+ * they are confirmed. `file` keeps the original photograph's number.
  *
  * The earlier sub-team bios are kept in writeups/team-bios.md.
  */
@@ -57,21 +57,21 @@ interface Member extends Person {
 }
 
 const MEMBERS: Member[] = [
-  { file: "IMG_3936", src: p3936 },
-  { file: "IMG_3938", src: p3938 },
-  { file: "IMG_3940", src: p3940 },
-  { file: "IMG_3941", src: p3941 },
-  { file: "IMG_3945", src: p3945 },
-  { file: "IMG_3948", src: p3948 },
-  { file: "IMG_3950", src: p3950 },
-  { file: "IMG_3952", src: p3952 },
-  { file: "IMG_3954", src: p3954 },
-  { file: "IMG_3956", src: p3956 },
-  { file: "IMG_3958", src: p3958 },
-  { file: "IMG_3960", src: p3960 },
-  { file: "IMG_3969", src: p3969 },
-  { file: "IMG_3971", src: p3971 },
-  { file: "IMG_3973", src: p3973 },
+  { file: "IMG_3936", src: p3936, name: "Aadya Shrivastava", role: "Team Member" },
+  { file: "IMG_3938", src: p3938, name: "Ahan Pathak", role: "Team Member" },
+  { file: "IMG_3940", src: p3940, name: "Debosmita Biswas", role: "Team Member" },
+  { file: "IMG_3941", src: p3941, name: "Joshua Jaison", role: "Team Member" },
+  { file: "IMG_3973", src: p3973, name: "Kaniganti Sarayu", role: "Team Member" },
+  { file: "IMG_3950", src: p3950, name: "Kartik Saxena", role: "Team Member" },
+  { file: "IMG_3948", src: p3948, name: "Lisa Nandy", role: "Team Member" },
+  { file: "IMG_3971", src: p3971, name: "Mohith Kamalakkannan", role: "Team Member" },
+  { file: "IMG_3954", src: p3954, name: "Ryan Ray", role: "Team Leader" },
+  { file: "IMG_3969", src: p3969, name: "Satwik Mahapatra", role: "Team Leader" },
+  { file: "IMG_3960", src: p3960, name: "Savio Joseph", role: "Team Member" },
+  { file: "IMG_3956", src: p3956, name: "Soham Acharya", role: "Team Member" },
+  { file: "IMG_3958", src: p3958, name: "Srijan Agrawal", role: "Team Leader" },
+  { file: "IMG_3945", src: p3945, name: "Yashwanth Seetharaman", role: "Team Leader" },
+  { file: "IMG_3952", src: p3952, name: "Yugant Chelak", role: "Team Member" },
 ];
 
 
@@ -134,6 +134,7 @@ export function Team() {
           {PIS.map((pi) => (
             <li key={pi.name} data-reveal>
               <PhotoCard person={pi} onOpen={setOpen} className="tm-card tm-card--pi" />
+              <span>{pi.name}</span>
             </li>
           ))}
         </ul>
