@@ -24,6 +24,8 @@
 .ed-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
 .ed-play { appearance: none; border: 0; padding: 0; cursor: pointer; position: absolute; inset: 0; width: 100%; height: 100%; background: var(--pine); display: block; }
 .ed-play-poly { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ed-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.ed-thumb[hidden] { display: none; }
 .ed-play-icon { position: absolute; left: 50%; top: 50%; width: clamp(56px, 6vw, 76px); height: auto; translate: -50% -50%; transition: scale 0.25s; }
 .ed-play-icon circle { fill: rgba(11, 48, 41, 0.62); stroke: var(--cream); stroke-width: 2.5; }
 .ed-play-icon path { fill: var(--cream); }

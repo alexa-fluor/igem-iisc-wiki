@@ -2,6 +2,11 @@ import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { WikiPage, P } from "../components/WikiPage";
 import { LowPoly } from "../components/LowPoly";
+import tRnaiLogic from "../assets/education/rnai-logic.jpg";
+import tGeneDrives from "../assets/education/gene-drives.jpg";
+import tInside from "../assets/education/inside-moskateer.jpg";
+import tGeneSilencing from "../assets/education/gene-silencing.jpg";
+import tPymol from "../assets/education/pymol-rnase.jpg";
 import "./human-practices.css";
 import "./education.css";
 
@@ -225,13 +230,17 @@ export const EDUCATION_PAGES = ARTICLES.map((a) => ({
 
 const CHANNEL = "https://www.youtube.com/@iGEM-IISc";
 
-/** Newest first. To add a video, add a line here: its id is the part after v= in the link. */
-const VIDEOS: { id: string; title: string; length: string }[] = [
-  { id: "rc3Y3rudPUA", title: "Explaining RNAi: The Logic Behind Gene Silencing", length: "3:03" },
-  { id: "VH-vaicIgu8", title: "Gene Drives Explained : When Inheritance is Biased", length: "3:46" },
-  { id: "Mm1wzYZDoFs", title: "iGEM at IISc: Inside MOSKATEER", length: "49:58" },
-  { id: "zoC9jKN_dvQ", title: "Gene Silencing Explained: Harnessing the power of RNAi", length: "1:03" },
-  { id: "ZTthQi23HG4", title: "PyMOL for Synthetic Biology: Modeling RNase III Interface Disruption", length: "36:30" },
+/**
+ * Newest first. To add a video, add a line here: its id is the part after v= in the link,
+ * and `thumb` is its YouTube thumbnail saved in src/assets/education/ (served from
+ * static.igem.wiki like every other image; see CLAUDE.md).
+ */
+const VIDEOS: { id: string; title: string; length: string; thumb: string }[] = [
+  { id: "rc3Y3rudPUA", title: "Explaining RNAi: The Logic Behind Gene Silencing", length: "3:03", thumb: tRnaiLogic },
+  { id: "VH-vaicIgu8", title: "Gene Drives Explained : When Inheritance is Biased", length: "3:46", thumb: tGeneDrives },
+  { id: "Mm1wzYZDoFs", title: "iGEM at IISc: Inside MOSKATEER", length: "49:58", thumb: tInside },
+  { id: "zoC9jKN_dvQ", title: "Gene Silencing Explained: Harnessing the power of RNAi", length: "1:03", thumb: tGeneSilencing },
+  { id: "ZTthQi23HG4", title: "PyMOL for Synthetic Biology: Modeling RNase III Interface Disruption", length: "36:30", thumb: tPymol },
 ];
 
 /**
@@ -252,7 +261,9 @@ function VideoCard({ v, i }: { v: (typeof VIDEOS)[number]; i: number }) {
           />
         ) : (
           <button type="button" className="ed-play" onClick={() => setPlaying(true)} aria-label={`Play: ${v.title}`}>
+            {/* the facets show until the thumbnail arrives, and stay if it is missing */}
             <LowPoly className="ed-play-poly" cell={90} drift={4} seed={11 + i * 7} />
+            <img className="ed-thumb" src={v.thumb} alt="" loading="lazy" onError={(e) => (e.currentTarget.hidden = true)} />
             <svg className="ed-play-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
               <circle cx="32" cy="32" r="30" />
               <path d="M26 20 L46 32 L26 44 Z" />
