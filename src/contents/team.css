@@ -1,9 +1,26 @@
-/* Team: principal investigators as plain names, then one size of photo card. */
+/* Team: photo cards that lift on hover, and the attributions pop-up. */
 .tm-pis { list-style: none; margin: clamp(10px, 2vw, 24px) 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px clamp(32px, 6vw, 88px); }
 .tm-pis li { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; font: 700 clamp(26px, 3.2vw, 44px)/1.15 var(--title); font-feature-settings: "cv11" 1, "ss01" 1; color: var(--pine); }
 .tm-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(14px, 1.6vw, 22px); }
-.tm-card { margin: 0; width: clamp(120px, 12.5vw, 160px); border-radius: 16px; overflow: hidden; background: var(--paper); box-shadow: 0 14px 30px -18px rgba(6, 40, 33, 0.55), 0 0 0 1px rgba(15, 74, 63, 0.08); }
+.tm-grid > div { width: clamp(120px, 12.5vw, 160px); perspective: 700px; }
+.tm-card { position: relative; display: block; width: 100%; padding: 0; border: 0; cursor: pointer; border-radius: 16px; overflow: hidden; background: var(--paper); font: inherit; box-shadow: 0 14px 30px -18px rgba(6, 40, 33, 0.55), 0 0 0 1px rgba(15, 74, 63, 0.08); transition: transform 0.35s cubic-bezier(.2,.7,.2,1), box-shadow 0.35s; }
+.tm-card--pi { width: clamp(140px, 14vw, 200px); }
 .tm-card img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
-.tm-card figcaption { padding: 10px 12px 12px; text-align: center; font: 700 0.8em/1.25 var(--title); color: var(--pine); }
-@media (max-width: 560px) { .tm-card { width: calc(50% - 10px); } }
-.tm-pis img { display: block; width: clamp(140px, 14vw, 200px); aspect-ratio: 4 / 5; object-fit: cover; border-radius: 16px; box-shadow: 0 14px 30px -18px rgba(6, 40, 33, 0.55), 0 0 0 1px rgba(15, 74, 63, 0.08); }
+.tm-name { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 10px 10px; text-align: center; font: 700 0.85rem/1.25 var(--title); color: #fff; background: linear-gradient(to top, rgba(6, 40, 33, 0.9), rgba(6, 40, 33, 0)); transform: translateY(100%); opacity: 0; transition: transform 0.35s cubic-bezier(.2,.7,.2,1), opacity 0.35s; }
+.tm-card:hover, .tm-card:focus-visible { transform: translateY(-8px) scale(1.06) rotateX(4deg); box-shadow: 0 30px 40px -20px rgba(6, 40, 33, 0.65), 0 0 0 1px rgba(15, 74, 63, 0.15); }
+.tm-card:hover .tm-name, .tm-card:focus-visible .tm-name { transform: none; opacity: 1; }
+.tm-card:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+.tm-modal { --pine: #0f4a3f; --teal: #1d715f; --paper: #fbfdfc; --ink: #17322b; --muted: #4f6a62; --title: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(6, 40, 33, 0.72); backdrop-filter: blur(4px); animation: tm-fade 0.25s ease; }
+.tm-dialog { position: relative; display: flex; width: min(820px, 100%); max-height: calc(100vh - 40px); overflow: auto; border-radius: 20px; background: var(--paper); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.6); animation: tm-rise 0.35s cubic-bezier(.2,.7,.2,1); }
+.tm-dialog img { flex: 0 0 min(300px, 38%); width: min(300px, 38%); object-fit: cover; aspect-ratio: 4 / 5; align-self: flex-start; }
+.tm-dialog-text { padding: clamp(24px, 3vw, 40px); color: var(--ink); }
+.tm-dialog-text h3 { margin: 0 0 4px; font: 700 clamp(24px, 2.6vw, 34px)/1.15 var(--title); color: var(--pine); }
+.tm-dialog-text h4 { margin: 18px 0 8px; font: 700 0.8rem/1 var(--title); letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); }
+.tm-dialog-text ul { margin: 0; padding-left: 1.2em; line-height: 1.6; }
+.tm-pending { margin: 0; color: var(--muted); }
+.tm-close { position: absolute; top: 10px; right: 12px; width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.9); color: var(--pine); font-size: 24px; line-height: 1; cursor: pointer; }
+@keyframes tm-fade { from { opacity: 0; } }
+@keyframes tm-rise { from { opacity: 0; transform: translateY(40px) scale(0.97); } }
+@media (max-width: 560px) { .tm-grid > div { width: calc(50% - 10px); } .tm-dialog { flex-direction: column; } .tm-dialog img { flex: none; width: 100%; } }
+@media (hover: none) { .tm-name { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .tm-card, .tm-name, .tm-modal, .tm-dialog { transition: none; animation: none; } }
