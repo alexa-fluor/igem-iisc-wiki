@@ -16,7 +16,7 @@ import { HumanPractices } from "./contents/human-practices";
 import { PublicEngagement } from "./contents/public-engagement";
 import { CommunitySurvey } from "./contents/community-survey";
 import { ARTICLE_PAGES } from "./contents/expert-articles";
-import { Education } from "./contents/education";
+import { Education, EDUCATION_PAGES } from "./contents/education";
 import { Communication } from "./contents/communication";
 import { Sustainability } from "./contents/sustainability";
 import { Team } from "./contents/team";
@@ -125,7 +125,7 @@ export const PAGES: Page[] = [
   {
     name: "Education", title: "Education", path: "/education", component: Education,
     group: "Human Practices", icon: "cap", tagline: "Malaria, explained from scratch",
-    lead: "Our write-ups on malaria, synthetic biology and biosafety.",
+    lead: "Explainers on malaria, synthetic biology and biosafety, to read and to watch.",
   },
   {
     name: "Sustainability", title: "Sustainability", path: "/sustainability", component: Sustainability,
@@ -171,6 +171,9 @@ export const PAGES: Page[] = [
 
   // One article per conversation on Integrated Human Practices, reached from its cards.
   ...ARTICLE_PAGES,
+
+  // One article per Education write-up, reached from its Read cards.
+  ...EDUCATION_PAGES,
 ];
 
 /** PAGES grouped for the navbar, in PAGES order, ungrouped pages first. */

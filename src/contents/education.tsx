@@ -1,27 +1,20 @@
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { WikiPage, P } from "../components/WikiPage";
 import { LowPoly } from "../components/LowPoly";
-import { TitleArt } from "../components/TitleArt";
+import "./human-practices.css";
 import "./education.css";
 
 /*
- * Education page.
+ * Education: the team's explainers, to read and to watch.
  *
- * The layout is a copy of the Ideation page, which is the one layout used
- * across the wiki: faceted hero, sticky navigator on the left, bands beneath
- * it. See wiki/ideation-page/LAYOUT-SPEC.md; do not re-derive the values.
- *
- * Only the content below changes. The prose is the team's own write-up,
+ * Read: one article per write-up, each on its own page. The prose is the team's own,
  * carried word for word; nothing here paraphrases, shortens or re-titles it.
- * Every animation is skipped under prefers-reduced-motion.
+ * Watch: the videos on the team's YouTube channel, which play in place.
  */
-
-/** Facet colours shared by the hero and the navigator, as on Ideation. */
-const HERO_COLORS = ["#0f4a3f", "#1d715f", "#2b7f6d", "#3f8a6a", "#4f8f74"];
 
 const reducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
 /**
  * Counts up to `to` the first time it scrolls into view. Used only to animate
@@ -57,7 +50,7 @@ function CountUp({ to, text }: { to: number; text: string }) {
 
 /** The write-up's paragraphs, in order, exactly as written. */
 function Prose({ paras }: { paras: ReactNode[] }) {
-  return <>{paras.map((p, i) => <p key={i}>{p}</p>)}</>;
+  return <>{paras.map((p, i) => <P key={i}>{p}</P>)}</>;
 }
 
 const IGEM: ReactNode[] = [
@@ -133,13 +126,13 @@ const SUGAR_TRAP: ReactNode[] = [
 
 const STILL_KILLING = (
   <>
-    <p>
+    <P>
       Given everything we now know about malaria, a parasite first observed under a microscope in
       1880, a transmission cycle elucidated out by 1897, treatments refined for over a century, and
       entire global eradication campaigns launched in the decades that followed - you&rsquo;d be
       forgiven for assuming this is a disease humanity has already solved. It isn&rsquo;t.
-    </p>
-    <p>
+    </P>
+    <P>
       According to the World Health Organization&rsquo;s most recent global data, malaria caused
       around <CountUp to={282} text="282" /> million cases and{" "}
       <CountUp to={610000} text="610,000" /> deaths in a single year, with the overwhelming
@@ -147,13 +140,13 @@ const STILL_KILLING = (
       <CountUp to={95} text="95" />% of deaths concentrated in Africa. And worse, that case number
       isn&rsquo;t falling. It&rsquo;s climbing: from about 230 million cases in 2015, up to 273
       million in 2023, and higher still after that.
-    </p>
-    <p>
+    </P>
+    <P>
       To understand why malaria keeps finding new footing despite all the existing medical
       interventions, it becomes important to look at a handful of very specific ways the disease
       has kept adapting just as fast as we have.
-    </p>
-    <p>
+    </P>
+    <P>
       One of the crucial factors explaining this, is the resistance occurring at 2 fronts. On one
       hand, the mosquitoes themselves are becoming harder to kill. Resistance to the insecticides
       used in bed nets and indoor spraying. On the other side, the parasite itself is starting to
@@ -163,252 +156,202 @@ const STILL_KILLING = (
       from underneath us. Adding to this, the disruptions caused by climate change, which is
       shifting rainfall and temperature patterns into new areas in ways that can expand where
       mosquitoes can survive and breed.
-    </p>
-    <p>
+    </P>
+    <P>
       A disease we&rsquo;ve technically understood for over a century is still, in practical terms,
       winning in large parts of the world and is thus difficult to tackle.
-    </p>
+    </P>
   </>
 );
 
 const ENGINEERING = (
   <>
-    <p>
+    <P>
       It starts with designing the genetic construct on paper, deciding exactly what pieces of DNA
       need to go into the bacterium, and in what order. A working genetic system is usually made up
       of several distinct parts working together:
-    </p>
+    </P>
 
     <Prose paras={ENGINEERING_PARTS} />
     <Prose paras={ENGINEERING_REST} />
   </>
 );
 
-/* ---------- page content: groups, each holding its sections ---------- */
-/*
- * Same model as Ideation: a group is a sub-heading on the page and in the
- * navigator, and each section inside it becomes one band and one link.
- * Education is one group for now; add another entry to GROUPS to split it.
- */
+/* ---------- Read: one article per write-up ---------- */
 
-type Band = "mist" | "dark" | "paper" | "teal";
-
-interface Section {
-  id: string;
+interface Article {
+  slug: string;
   title: string;
-  /** Short label for the navigator; the heading on the page keeps the full title. */
+  /** Shorter label for the navigator; the page heading keeps the full title. */
   nav?: string;
-  /** Short marker shown above the title. */
-  kicker?: string;
-  band: Band;
-  /** Running text, shown beside `figure` on wide screens. */
-  text?: ReactNode;
-  figure?: ReactNode;
-  /** Full-width content under the text and figure. */
-  after?: ReactNode;
-  layout?: "split" | "funnel";
+  body: ReactNode;
 }
 
-interface Cycle {
-  id: string;
-  title: string;
-  lead?: string;
-  /** Background used while the group has no sections yet. */
-  band?: Band;
-  sections: Section[];
-}
-
-const CYCLES: Cycle[] = [
-  {
-    id: "basics",
-    title: "Education",
-    sections: [
-      { id: "igem", title: "What is iGEM?", nav: "What is iGEM?", band: "mist", text: <Prose paras={IGEM} /> },
-      { id: "malaria", title: "Malaria", nav: "Malaria", band: "dark", text: <Prose paras={MALARIA} /> },
-      {
-        id: "life-cycle", title: "What is Malaria? Part 2: How It Spreads: The Life Cycle", nav: "How It Spreads",
-        band: "paper", text: <Prose paras={LIFE_CYCLE} />,
-      },
-      {
-        id: "still-killing", title: "Why Is Malaria Still Killing Millions in 2026", nav: "Still killing millions",
-        band: "teal", text: STILL_KILLING,
-      },
-      {
-        id: "one-health", title: "Why is mosquito control a human, animal and ecosystem problem?", nav: "A One Health problem",
-        band: "mist", text: <Prose paras={ONE_HEALTH} />,
-      },
-      { id: "synbio", title: "What is Synthetic Biology?", nav: "What is Synthetic Biology?", band: "dark", text: <Prose paras={SYNBIO} /> },
-      { id: "engineering", title: "How We Engineer Bacteria", nav: "How We Engineer Bacteria", band: "paper", text: ENGINEERING },
-      {
-        id: "biosafety", title: "Biosafety Levels in Synthetic Biology Research", nav: "Biosafety Levels",
-        band: "teal", text: <Prose paras={BIOSAFETY} />,
-      },
-      {
-        id: "sugar-trap", title: "What is a sugar trap and how does it work?", nav: "The sugar trap",
-        band: "mist", text: <Prose paras={SUGAR_TRAP} />,
-      },
-    ],
-  },
+const ARTICLES: Article[] = [
+  { slug: "what-is-igem", title: "What is iGEM?", body: <Prose paras={IGEM} /> },
+  { slug: "malaria", title: "Malaria", body: <Prose paras={MALARIA} /> },
+  { slug: "life-cycle", title: "What is Malaria? Part 2: How It Spreads: The Life Cycle", nav: "How It Spreads", body: <Prose paras={LIFE_CYCLE} /> },
+  { slug: "still-killing", title: "Why Is Malaria Still Killing Millions in 2026", nav: "Still killing millions", body: STILL_KILLING },
+  { slug: "one-health", title: "Why is mosquito control a human, animal and ecosystem problem?", nav: "A One Health problem", body: <Prose paras={ONE_HEALTH} /> },
+  { slug: "synthetic-biology", title: "What is Synthetic Biology?", body: <Prose paras={SYNBIO} /> },
+  { slug: "engineering-bacteria", title: "How We Engineer Bacteria", body: ENGINEERING },
+  { slug: "biosafety-levels", title: "Biosafety Levels in Synthetic Biology Research", nav: "Biosafety Levels", body: <Prose paras={BIOSAFETY} /> },
+  { slug: "sugar-trap", title: "What is a sugar trap and how does it work?", nav: "The sugar trap", body: <Prose paras={SUGAR_TRAP} /> },
 ];
 
-/** Anchors the navigator tracks, in page order: each section, or the group itself while it is empty. */
-const ANCHORS = CYCLES.flatMap((c) => (c.sections.length ? c.sections.map((s) => s.id) : [c.id]));
-/** Section numbers shown in the navigator and on the phone rail. */
-const SECTION_NO = new Map(CYCLES.flatMap((c) => c.sections).map((s, i) => [s.id, i + 1]));
-
-/** A group whose sections have not been written yet: just its heading on a band. */
-function EmptyCycle({ cycle, z }: { cycle: Cycle; z: number }) {
+function ArticlePage({ article }: { article: Article }) {
   return (
-    <section id={cycle.id} className={`edu-band edu-band--${cycle.band ?? "mist"} edu-band--cycle-only${z === 0 ? " edu-band--first" : ""}`}
-      style={{ zIndex: z + 1 }}>
-      <div className="edu-inner">
-        <header className="edu-cycle-head" data-reveal>
-          <h2>{cycle.title}</h2>
-          {cycle.lead && <p className="edu-cycle-lead">{cycle.lead}</p>}
-        </header>
-      </div>
-    </section>
+    <WikiPage
+      slug="education-article"
+      kicker="Education"
+      heroExtra={<Link to="/education#read" className="hp-back">← All education</Link>}
+      title={article.title}
+      sections={[{ id: "article", title: "", nav: article.nav ?? article.title, band: "mist", body: article.body }]}
+    />
   );
 }
 
-function SectionBand({ sec, z }: { sec: Section; z: number }) {
-  const head = (
-    <div className={sec.layout === "funnel" ? "edu-funnel-text" : undefined} data-reveal>
-      {sec.kicker && <p className="edu-kicker">{sec.kicker}</p>}
-      <h3>{sec.title}</h3>
-      {sec.text}
-    </div>
-  );
-  const split = sec.figure ? `edu-inner edu-split${sec.layout === "funnel" ? " edu-split--funnel" : ""}` : "edu-inner";
+/** Each article as a registry entry for pages.ts: routed, but not in the navbar. */
+export const EDUCATION_PAGES = ARTICLES.map((a) => ({
+  name: a.title,
+  title: a.title,
+  path: `/education/${a.slug}`,
+  component: () => <ArticlePage article={a} />,
+  unlisted: true as const,
+  lead: "An Education write-up by the team.",
+}));
+
+/* ---------- Watch: the team's YouTube channel ---------- */
+
+const CHANNEL = "https://www.youtube.com/@iGEM-IISc";
+
+/** Newest first. To add a video, add a line here: its id is the part after v= in the link. */
+const VIDEOS: { id: string; title: string; length: string }[] = [
+  { id: "rc3Y3rudPUA", title: "Explaining RNAi: The Logic Behind Gene Silencing", length: "3:03" },
+  { id: "VH-vaicIgu8", title: "Gene Drives Explained : When Inheritance is Biased", length: "3:46" },
+  { id: "Mm1wzYZDoFs", title: "iGEM at IISc: Inside MOSKATEER", length: "49:58" },
+  { id: "zoC9jKN_dvQ", title: "Gene Silencing Explained: Harnessing the power of RNAi", length: "1:03" },
+  { id: "ZTthQi23HG4", title: "PyMOL for Synthetic Biology: Modeling RNase III Interface Disruption", length: "36:30" },
+];
+
+/**
+ * A video card. Nothing is loaded from YouTube until it is played, so the page stays light
+ * and sends no request to YouTube before the reader asks for the video.
+ */
+function VideoCard({ v, i }: { v: (typeof VIDEOS)[number]; i: number }) {
+  const [playing, setPlaying] = useState(false);
   return (
-    <section id={sec.id} className={`edu-band edu-band--${sec.band}${z === 0 ? " edu-band--first" : ""}`}
-      style={{ zIndex: z + 1 }}>
-      <div className={split}>
-        {head}
-        {sec.figure}
+    <article className="ed-video">
+      <div className="ed-video-frame">
+        {playing ? (
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0`}
+            title={v.title}
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+          />
+        ) : (
+          <button type="button" className="ed-play" onClick={() => setPlaying(true)} aria-label={`Play: ${v.title}`}>
+            <LowPoly className="ed-play-poly" cell={90} drift={4} seed={11 + i * 7} />
+            <svg className="ed-play-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+              <circle cx="32" cy="32" r="30" />
+              <path d="M26 20 L46 32 L26 44 Z" />
+            </svg>
+            <span className="ed-length">{v.length}</span>
+          </button>
+        )}
       </div>
-      {sec.after && <div className="edu-inner">{sec.after}</div>}
-    </section>
+      <div className="ed-video-body">
+        <h3>{v.title}</h3>
+        <a href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noopener noreferrer" className="hp-card-go">
+          Watch on YouTube <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </article>
+  );
+}
+
+/* ---------- the page: Read | Watch ---------- */
+
+type Tab = "read" | "watch";
+
+function Hub() {
+  const { hash } = useLocation();
+  const navigate = useNavigate();
+  const tab: Tab = hash === "#watch" ? "watch" : "read";
+  const tabs: { id: Tab; label: string; n: number }[] = [
+    { id: "read", label: "Read", n: ARTICLES.length },
+    { id: "watch", label: "Watch", n: VIDEOS.length },
+  ];
+  const pick = (t: Tab) => navigate({ hash: `#${t}` }, { replace: true, preventScrollReset: true });
+  // arrow keys move between the two tabs, as a tablist should
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") pick(tab === "read" ? "watch" : "read");
+  };
+  return (
+    <>
+      <div className="ed-tabs" role="tablist" aria-label="Read or watch" onKeyDown={onKey}>
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            id={`ed-tab-${t.id}`}
+            type="button"
+            role="tab"
+            aria-selected={tab === t.id}
+            aria-controls="ed-panel"
+            tabIndex={tab === t.id ? 0 : -1}
+            className={tab === t.id ? "is-on" : undefined}
+            onClick={() => pick(t.id)}
+          >
+            {t.label} <b>{t.n}</b>
+          </button>
+        ))}
+      </div>
+      <div id="ed-panel" role="tabpanel" aria-labelledby={`ed-tab-${tab}`}>
+        {tab === "read" ? (
+          <div className="hp-cards">
+            {ARTICLES.map((a, i) => (
+              <Link key={a.slug} to={`/education/${a.slug}`} className="hp-card">
+                <div className="hp-card-img is-facet">
+                  <LowPoly className="hp-card-poly" cell={90} drift={4} seed={3 + i * 5} />
+                </div>
+                <div className="hp-card-body">
+                  <h3>{a.title}</h3>
+                  <span className="hp-card-go">Read <span aria-hidden="true">→</span></span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="ed-videos">
+              {VIDEOS.map((v, i) => <VideoCard key={v.id} v={v} i={i} />)}
+            </div>
+            <p className="ed-channel">
+              More on our channel: <a href={CHANNEL} target="_blank" rel="noopener noreferrer">youtube.com/@iGEM-IISc ↗</a>
+            </p>
+          </>
+        )}
+      </div>
+    </>
   );
 }
 
 export function Education() {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const barRef = useRef<HTMLSpanElement>(null);
-  const [active, setActive] = useState(0);
-
-  // Hide below-the-fold content before first paint so it can animate in.
-  useLayoutEffect(() => {
-    const root = rootRef.current;
-    if (root && !reducedMotion() && "IntersectionObserver" in window) root.classList.add("edu-motion");
-  }, []);
-
-  // Reveal on scroll.
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const els = root.querySelectorAll<HTMLElement>("[data-reveal]");
-    if (!root.classList.contains("edu-motion")) {
-      els.forEach((e) => e.classList.add("is-in"));
-      return;
-    }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => {
-        if (en.isIntersecting) {
-          en.target.classList.add("is-in");
-          io.unobserve(en.target);
-        }
-      });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
-    els.forEach((e) => io.observe(e));
-    return () => io.disconnect();
-  }, []);
-
-  // Navigator: highlight the section being read and fill the bar with overall progress.
-  useEffect(() => {
-    const bar = barRef.current;
-    if (!bar) return;
-    let frame = 0;
-    let last = -1;
-    const update = () => {
-      frame = 0;
-      const line = window.innerHeight * 0.35;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const atEnd = window.scrollY >= max - 4;
-      let idx = 0;
-      ANCHORS.forEach((id, i) => {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= line) idx = i;
-      });
-      if (atEnd) idx = ANCHORS.length - 1;
-      bar.style.transform = `scaleY(${max > 0 ? clamp01(window.scrollY / max) : 0})`;
-      if (idx !== last) {
-        last = idx;
-        setActive(idx);
-      }
-    };
-    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    update();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  const go = (id: string) => (e: MouseEvent) => {
-    e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth" });
-  };
-
-  const activeId = ANCHORS[active];
-  let z = 0;
-
   return (
-    <div className="edu-page" ref={rootRef}>
-      <header className="edu-hero">
-        <LowPoly className="edu-hero-canvas" colors={HERO_COLORS} cell={120} drift={6} glow seed={5} />
-        <div className="hero-art" aria-hidden="true"><TitleArt name="grad-cap" /></div>
-        <div className="edu-hero-text">
-          <h1 className="edu-title">Education</h1>
-        </div>
-        <svg className="edu-wave" viewBox="0 0 1440 260" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 40 C240 70 420 110 560 190 C690 262 820 268 960 244 C1110 218 1250 190 1440 238 V260 H0 Z" />
-        </svg>
-      </header>
-
-      <div className="edu-body">
-        <aside className="edu-side" aria-label="Sections on this page">
-          <LowPoly className="edu-side-canvas" colors={HERO_COLORS} cell={110} drift={5} seed={13} />
-          <nav className="edu-toc">
-            <div className="edu-toc-list">
-              {CYCLES.map((c) => (
-                <div key={c.id} className="edu-toc-group">
-                  <ol>
-                    {c.sections.map((st) => (
-                      <li key={st.id}>
-                        <a href={`#${st.id}`} onClick={go(st.id)} className={st.id === activeId ? "is-on" : undefined}
-                          aria-current={st.id === activeId ? "true" : undefined}>
-                          <b aria-hidden="true">{SECTION_NO.get(st.id)}</b><span>{st.nav ?? st.title}</span>
-                        </a>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              ))}
-            </div>
-            <div className="edu-toc-bar" aria-hidden="true"><span ref={barRef} /></div>
-          </nav>
-        </aside>
-
-        <main className="edu-main">
-          {CYCLES.map((c) => c.sections.length
-            ? c.sections.map((sec) => <SectionBand key={sec.id} sec={sec} z={z++} />)
-            : <EmptyCycle key={c.id} cycle={c} z={z++} />)}
-        </main>
-      </div>
-    </div>
+    <WikiPage
+      slug="education"
+      sideless
+      title="Education"
+      sections={[
+        {
+          id: "education",
+          title: "",
+          band: "mist",
+          lead: "Our explainers on malaria, synthetic biology and biosafety. Read them, or watch.",
+          after: <Hub />,
+        },
+      ]}
+    />
   );
 }

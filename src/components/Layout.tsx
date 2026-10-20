@@ -46,8 +46,9 @@ function keepPanelOnScreen(e: React.SyntheticEvent<HTMLDivElement>) {
   const panel = group.querySelector<HTMLElement>(".wk-panel");
   if (!panel) return;
   const edge = 16;
-  // where the panel sits before any nudge: the group's left edge plus the panel's own offset
-  const left = group.getBoundingClientRect().left + panel.offsetLeft;
+  // where the panel sits before any nudge: the group's left edge less the panel's padding (see .wk-panel).
+  // Not offsetLeft: that already includes the nudge from the last time it opened.
+  const left = group.getBoundingClientRect().left - 22;
   const shift = Math.min(0, window.innerWidth - edge - (left + panel.offsetWidth));
   panel.style.setProperty("--shift", `${Math.max(shift, edge - left).toFixed(0)}px`);
 }
