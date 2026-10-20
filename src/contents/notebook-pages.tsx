@@ -62,10 +62,9 @@ export const NB_PAGES: NbPage[] = [
       p("Who we want to hear from:"),
       <Todo key="1">a clinician who sees the disease</Todo>,
       <Todo key="2">someone from vector control</Todo>,
-      <Todo key="3">a public health researcher</Todo>,
       <Todo key="4">people in the community itself</Todo>,
-      p("For each call: what worries you, what would make you trust it, what would make you refuse it?"),
-      <Sticky key="s">write up every call the same day!</Sticky>,
+      p("For each call: what worries you? What would make you trust it?"),
+      <Sticky key="s">write up calls same day!</Sticky>,
     ],
   },
   {
@@ -140,8 +139,8 @@ export const NB_PAGES: NbPage[] = [
     rows: [
       p("Plan for the pull-down: catch the tagged protein on beads and see what comes along with it."),
       <Fig lines={3} key="f"><Flow steps={["lyse", "bind", "wash", "elute"]} /></Fig>,
-      p("What a clean result would look like, drawn before we run it so we cannot talk ourselves into anything afterwards:"),
-      <Fig lines={6} key="c"><SketchChart kind="dose" x="sample" y="signal" /></Fig>,
+      p("What a clean result would look like, drawn before we run it so we cannot fool ourselves:"),
+      <Fig lines={5} key="c"><SketchChart kind="dose" x="sample" y="signal" /></Fig>,
       p("The flat line is the control. If the two lines look alike, that is an answer too."),
     ],
   },
