@@ -60,6 +60,15 @@
   font-family: "Amatic SC"; font-style: normal; font-weight: 700; font-display: swap;
   src: url("/fonts/amatic-sc-700.woff2") format("woff2");
 }
+/* Caveat and Reenie Beanie — the handwriting in the Notebook page (SIL Open Font License). */
+@font-face {
+  font-family: "Caveat"; font-style: normal; font-weight: 400 700; font-display: swap;
+  src: url("/fonts/caveat-var.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Reenie Beanie"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/reenie-beanie-400.woff2") format("woff2");
+}
 /* Poppins — the geometric face the team's banner sets its tagline in, used for
    the tagline under the wordmark on the landing page and nowhere else. */
 @font-face {
