@@ -17,8 +17,9 @@ Read this first, then `README.md` for the file layout.
    - Pages are built from `WikiPage` (`src/components/WikiPage.tsx`); the page registry is `src/pages.ts`.
    - Text is live HTML, never a screenshot. Screenshots look blurry (that was the original problem with the hero and numbers).
 4. **Commits are authored by the user**, Srijan Agrawal <asrijan@iisc.ac.in>. Do **not** add `Co-Authored-By: Claude` or "Generated with Claude Code" lines to commits.
-5. **Never fabricate** results, data, citations or team facts. The Results page is deliberately "awaiting data".
-6. **Verify before saying done**: `npx tsc -b`, a production build, and look at the page in a browser at desktop width.
+5. **iGEM's asset rules are hard rules** (from the template README, `gitlab.igem.org/templates/wiki-frozen-flask`): images, photos, icons and fonts only from `static.igem.wiki`; **videos only embedded from iGEM Video Universe**; no external CDNs, no third-party embeds or iframes. Check the README before adding anything that loads from another host. Plain outbound links are fine.
+6. **Never fabricate** results, data, citations or team facts. The Results page is deliberately "awaiting data".
+7. **Verify before saying done**: `npx tsc -b`, a production build, and look at the page in a browser at desktop width.
 
 ## Build
 
@@ -114,7 +115,7 @@ The GitHub repo (`origin` here) is a plain `git push origin main`; no token prom
 - Navbar groups: Project (Description, Ideation), Lab (Experiments, Results, Notebook, Modelling, Biosafety), Human Practices (Integrated Human Practices, Public Engagement, Community Survey, Education, Sustainability, Gallery), plus Team. A panel with more than three items splits into two even rows (`panelColumns` in `Layout.tsx`); `keepPanelOnScreen` nudges a panel left only if it would leave the window. It uses a fixed 22 px offset on purpose (see the comment): reading the panel's own `offsetLeft` double-counts the last nudge.
 - **Integrated Human Practices** (`/human-practices`): a card per expert/stakeholder conversation. Each card opens `/human-practices/<slug>` (text and photos in `expert-articles.tsx`, text exactly as the team sent it). Three of the five cards have no photo and show the wiki's facet strip; add `image` to an entry in `ARTICLES` when a photo exists.
 - **Public Engagement** (`/public-engagement`): AIIM, Sciastra Quiz, iGEM Orientation, as sections. **Community Survey** (`/community-survey`): the survey text and nine charts under three headings (charts are drawn from the Google Forms screenshots; two surveys of 61 and 93 responses, never merged).
-- **Education** (`/education`): a Read | Watch switch (`#read` / `#watch`). Read = nine cards to `/education/<slug>` articles (text word for word). Watch = the `VIDEOS` list in `education.tsx`: a thumbnail card that plays the video in place (youtube-nocookie iframe, loaded only on click). To add a video: add a line to `VIDEOS` (the id is the part after `v=`), save its YouTube thumbnail (`https://img.youtube.com/vi/<id>/maxresdefault.jpg`) as `src/assets/education/<name>.jpg`, import it, and upload `education__<name>.jpg` to static.igem.wiki (see Images). Until uploaded, the card shows the facets instead.
+- **Education** (`/education`): a Read | Watch switch (`#read` / `#watch`). Read = nine cards to `/education/<slug>` articles (text word for word). Watch = the `VIDEOS` list in `education.tsx`: a thumbnail card per video. **iGEM requires wiki videos to be embedded from iGEM Video Universe (video.igem.org), never YouTube**, so a card is a plain link to the team's YouTube video until it has an `embed` (the `src` from the Share > Embed code of the video once uploaded to Video Universe); then it plays in place. To add a video: add a line to `VIDEOS` (the id is the part after `v=`), save its YouTube thumbnail (`https://img.youtube.com/vi/<id>/maxresdefault.jpg`) as `src/assets/education/<name>.jpg`, import it, and upload `education__<name>.jpg` to static.igem.wiki (see Images). Until uploaded, the card shows the facets instead.
 - **Home** (`src/contents/home.tsx`): pinned scroll sections use `usePin`, which can ease toward the scroll position (`smooth`). "The whole chain" is a ring of four cards with clockwise arrows that light up as you scroll (`Chain`).
 - `WikiPage`'s reveal observer caps how much of a section must be visible at 8% of the screen. Without that, a section taller than about twelve screens never revealed on a short window and looked empty until you zoomed out.
 
@@ -133,18 +134,17 @@ This local repo is the GitHub copy; GitLab is what deploys. Their **commit hashe
 - The desktop navbar only shows at 1101 px and wider; below that it is the burger sheet. Emulate 1200x700 to test the dropdowns.
 - After a resize or navigation, the page re-flows, so a scroll can land in the wrong place. Scroll again and wait a second before measuring or screenshotting; screenshots can lag the scroll.
 - Hover tests: `find` gives a ref, then `computer hover` on the ref; a coordinate hover needs a screenshot first. Read the panel's position with `getBoundingClientRect()` rather than judging by eye.
-- The preview pane does not render YouTube embeds (blank frame), so playback cannot be verified there.
 - Image copies for upload go in `~/Downloads/igem-upload/` as `<dir>__<name>.<ext>`.
 
 ## Where things stand
 
 Live on GitLab (pushed by the user): the Home changes (map lower, numbers fit the frame, ring chain, smoother pins), the Human Practices restructure (articles, Public Engagement, Community Survey, centred larger photos), two-row dropdowns. Soham's footer commits are in (footer shown, CC licence line, prev/next cards commented out).
 
-Prepared but possibly not yet pushed: the Education Read | Watch page, the dropdown reopen fix, and the video thumbnails. Check `git log origin/main` in a fresh GitLab clone to see.
+Also live: the Education Read | Watch page. Not yet pushed at the time of writing: the video thumbnails and the change from a YouTube embed to plain links. Check `git log origin/main` in a fresh GitLab clone to see.
 
 **Needs doing by the user:**
 - Upload the five Education thumbnails (`education__rnai-logic.jpg`, `education__gene-drives.jpg`, `education__inside-moskateer.jpg`, `education__gene-silencing.jpg`, `education__pymol-rnase.jpg`) to `images-igem-iisc`, then check each returns 200 (names become `education-<name>.avif`).
-- Confirm a YouTube video plays inside the live Education page; if iGEM blocks embeds, the "Watch on YouTube" links still work.
+- Upload the videos to iGEM Video Universe and send the embed addresses; they go in `VIDEOS` as `embed`. Until then the Watch cards link to YouTube.
 - Three more videos were due on 20 Oct 2026: add them to `VIDEOS`.
 
 Open:

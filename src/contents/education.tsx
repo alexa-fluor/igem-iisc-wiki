@@ -234,8 +234,13 @@ const CHANNEL = "https://www.youtube.com/@iGEM-IISc";
  * Newest first. To add a video, add a line here: its id is the part after v= in the link,
  * and `thumb` is its YouTube thumbnail saved in src/assets/education/ (served from
  * static.igem.wiki like every other image; see CLAUDE.md).
+ *
+ * iGEM requires wiki videos to be embedded from iGEM Video Universe (video.igem.org), never
+ * from YouTube. So a card plays in place only once it has an `embed`: upload the video to
+ * Video Universe, then paste the `src` of the embed code from its Share button. Until then
+ * the card is a plain link to the video on the team's YouTube channel.
  */
-const VIDEOS: { id: string; title: string; length: string; thumb: string }[] = [
+const VIDEOS: { id: string; title: string; length: string; thumb: string; embed?: string }[] = [
   { id: "rc3Y3rudPUA", title: "Explaining RNAi: The Logic Behind Gene Silencing", length: "3:03", thumb: tRnaiLogic },
   { id: "VH-vaicIgu8", title: "Gene Drives Explained : When Inheritance is Biased", length: "3:46", thumb: tGeneDrives },
   { id: "Mm1wzYZDoFs", title: "iGEM at IISc: Inside MOSKATEER", length: "49:58", thumb: tInside },
@@ -243,38 +248,52 @@ const VIDEOS: { id: string; title: string; length: string; thumb: string }[] = [
   { id: "ZTthQi23HG4", title: "PyMOL for Synthetic Biology: Modeling RNase III Interface Disruption", length: "36:30", thumb: tPymol },
 ];
 
+/** The thumbnail, play mark and length, shared by the two kinds of card. */
+function Poster({ v, i }: { v: (typeof VIDEOS)[number]; i: number }) {
+  return (
+    <>
+      {/* the facets show until the thumbnail arrives, and stay if it is missing */}
+      <LowPoly className="ed-play-poly" cell={90} drift={4} seed={11 + i * 7} />
+      <img className="ed-thumb" src={v.thumb} alt="" loading="lazy" onError={(e) => (e.currentTarget.hidden = true)} />
+      <svg className="ed-play-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <circle cx="32" cy="32" r="30" />
+        <path d="M26 20 L46 32 L26 44 Z" />
+      </svg>
+      <span className="ed-length">{v.length}</span>
+    </>
+  );
+}
+
 /**
- * A video card. Nothing is loaded from YouTube until it is played, so the page stays light
- * and sends no request to YouTube before the reader asks for the video.
+ * A video card. With an iGEM Video Universe `embed` it plays in place, loading nothing until
+ * the reader presses play. Without one it is a link to the video on the team's channel.
  */
 function VideoCard({ v, i }: { v: (typeof VIDEOS)[number]; i: number }) {
   const [playing, setPlaying] = useState(false);
+  const watchUrl = `https://www.youtube.com/watch?v=${v.id}`;
   return (
     <article className="ed-video">
       <div className="ed-video-frame">
-        {playing ? (
+        {v.embed && playing ? (
           <iframe
-            src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0`}
+            src={v.embed}
             title={v.title}
             allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
             allowFullScreen
           />
-        ) : (
+        ) : v.embed ? (
           <button type="button" className="ed-play" onClick={() => setPlaying(true)} aria-label={`Play: ${v.title}`}>
-            {/* the facets show until the thumbnail arrives, and stay if it is missing */}
-            <LowPoly className="ed-play-poly" cell={90} drift={4} seed={11 + i * 7} />
-            <img className="ed-thumb" src={v.thumb} alt="" loading="lazy" onError={(e) => (e.currentTarget.hidden = true)} />
-            <svg className="ed-play-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-              <circle cx="32" cy="32" r="30" />
-              <path d="M26 20 L46 32 L26 44 Z" />
-            </svg>
-            <span className="ed-length">{v.length}</span>
+            <Poster v={v} i={i} />
           </button>
+        ) : (
+          <a className="ed-play" href={watchUrl} target="_blank" rel="noopener noreferrer" aria-label={`Watch on YouTube: ${v.title}`}>
+            <Poster v={v} i={i} />
+          </a>
         )}
       </div>
       <div className="ed-video-body">
         <h3>{v.title}</h3>
-        <a href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noopener noreferrer" className="hp-card-go">
+        <a href={watchUrl} target="_blank" rel="noopener noreferrer" className="hp-card-go">
           Watch on YouTube <span aria-hidden="true">↗</span>
         </a>
       </div>
