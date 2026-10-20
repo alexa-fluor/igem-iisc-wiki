@@ -78,6 +78,8 @@ The `TEAM_PATH` placeholders in `src/contents/sustainability.css` and `home.css`
 
 ## Pushing to GitLab (this is what deploys the live site)
 
+Handy: keep one clone and reuse it, e.g. `~/Downloads/igem-gitlab` (`git pull --rebase origin main` before preparing a commit), then give the user `cd <that path> && git push origin main`. The user wants the push command in exactly that form. Copy only the files you changed; `CLAUDE.md` is not tracked on GitLab, so do not copy it there.
+
 The assistant cannot log in to GitLab, so it cannot push. The repo is readable without a login, though: `git clone https://gitlab.igem.org/2026/iisc-bengaluru.git` into the scratchpad shows what teammates pushed and is the right place to prepare the commit. It prepares a commit; **the user pushes** with their GitLab username and a personal access token (scope `write_repository`) as the password. A GitLab password does not work over HTTPS. Token page: https://gitlab.igem.org/-/user_settings/personal_access_tokens. Never ask for the token in chat.
 
 The GitLab repo has files this repo does not, so do not wipe it with a bare copy. **GitLab-only files, never delete or overwrite:** `.gitlab-ci.yml`, `.env`, `LICENSE`, `.claude/`, `yarn.lock`, and anything a teammate adds (for example `public/world-110m.json`).
@@ -116,6 +118,8 @@ The GitHub repo (`origin` here) is a plain `git push origin main`; no token prom
 - **Integrated Human Practices** (`/human-practices`): a card per expert/stakeholder conversation. Each card opens `/human-practices/<slug>` (text and photos in `expert-articles.tsx`, text exactly as the team sent it). Three of the five cards have no photo and show the wiki's facet strip; add `image` to an entry in `ARTICLES` when a photo exists.
 - **Public Engagement** (`/public-engagement`): AIIM, Sciastra Quiz, iGEM Orientation, as sections. **Community Survey** (`/community-survey`): the survey text and nine charts under three headings (charts are drawn from the Google Forms screenshots; two surveys of 61 and 93 responses, never merged).
 - **Education** (`/education`): a Read | Watch switch (`#read` / `#watch`). Read = nine cards to `/education/<slug>` articles (text word for word). Watch = the `VIDEOS` list in `education.tsx`: a thumbnail card per video. **iGEM requires wiki videos to be embedded from iGEM Video Universe (video.igem.org), never YouTube**, so a card is a plain link to the team's YouTube video until it has an `embed` (the `src` from the Share > Embed code of the video once uploaded to Video Universe); then it plays in place. To add a video: add a line to `VIDEOS` (the id is the part after `v=`), save its YouTube thumbnail (`https://img.youtube.com/vi/<id>/maxresdefault.jpg`) as `src/assets/education/<name>.jpg`, import it, and upload `education__<name>.jpg` to static.igem.wiki (see Images). Until uploaded, the card shows the facets instead.
+- **Team** (`/team`, `team.tsx`): the two PIs (Dr. Shantanu Shukla, Dr. Vishal Singh, names printed under their photos), then a **Team Members** grid of fifteen photo cards in alphabetical order by name (the file number of each original photo is kept in `file`). Hover lifts and tilts a card and the name rises over the photo; a click opens a pop-up in **iGEM's attributions format**: role, Tasks (tags such as Analysis, Wiki Coding, Public Engagement) and Specific Tasks written as "(1) Area – what they did; (2) ...". Names and roles are set (Team Leaders: Ryan Ray, Satwik Mahapatra, Srijan Agrawal, Yashwanth Seetharaman; everyone else Team Member). **Tasks and Specific Tasks still read "To be added."** until each person confirms them; never write them for someone. The team's own list may already be at `teams.igem.org/wiki/6506/attributions`. Names map to photos as the user gave them (row by row, then sorted alphabetically); photos are 480x600 face-centred crops.
+- **Gallery** (`/gallery`): Lab Work and Lab Fun sections; the whole-team group photo (`g17`) sits next to the courtyard shot (`g12`); `g14` (blue curtain selfie) was dropped from the page but its file remains. Image heights are fixed per row (`gallery.css`), which the user likes; do not tighten it.
 - **Notebook** (`/notebook`): a bound book you turn page by page (`notebook-book.tsx`), written in Patrick Hand (titles in Kalam); hand-drawn SVG doodles and sketch charts in `notebook-hand.tsx` (no data in them, only sketches); entries in `notebook-pages.tsx`, April to October, covering wet lab, dry lab, human practices, ideation, outreach and the wiki. **The entries are placeholders** (marked "draft entry" on every page; set `DRAFT = false` in `notebook.tsx` once they are the team's own notes). A page holds about 15 ruled lines; sizes are in `cqw`, so check each page for overflow after editing.
 - **Home** (`src/contents/home.tsx`): pinned scroll sections use `usePin`, which can ease toward the scroll position (`smooth`). "The whole chain" is a ring of four cards with clockwise arrows that light up as you scroll (`Chain`).
 - `WikiPage`'s reveal observer caps how much of a section must be visible at 8% of the screen. Without that, a section taller than about twelve screens never revealed on a short window and looked empty until you zoomed out.
@@ -139,12 +143,13 @@ This local repo is the GitHub copy; GitLab is what deploys. Their **commit hashe
 
 ## Where things stand
 
-Live on GitLab (pushed by the user): the Home changes (map lower, numbers fit the frame, ring chain, smoother pins), the Human Practices restructure (articles, Public Engagement, Community Survey, centred larger photos), two-row dropdowns. Soham's footer commits are in (footer shown, CC licence line, prev/next cards commented out).
+Live on GitLab: Home changes, Human Practices restructure, two-row dropdowns, Soham's footer commits, the Education Read | Watch page (thumbnails uploaded and live), the Team page rework (Dr. prefix, Team Members, hover cards, attributions pop-up), the Gallery group photo, and the Notebook book (Patrick Hand / Kalam handwriting).
 
-Also live: the Education Read | Watch page. Not yet pushed at the time of writing: the video thumbnails and the change from a YouTube embed to plain links. Check `git log origin/main` in a fresh GitLab clone to see.
+Ready but possibly not pushed yet: "Fonts: load from static.igem.wiki instead of the bundle" (the `@font-face` URLs in `src/global.css` now point at `https://static.igem.wiki/teams/6506/wiki/fonts/iisc/`; all eight files are uploaded and verified identical to `public/fonts/`). Check `git log origin/main` in a fresh GitLab clone to see.
 
-**Needs doing by the user:**
-- Upload the five Education thumbnails (`education__rnai-logic.jpg`, `education__gene-drives.jpg`, `education__inside-moskateer.jpg`, `education__gene-silencing.jpg`, `education__pymol-rnase.jpg`) to `images-igem-iisc`, then check each returns 200 (names become `education-<name>.avif`).
+**Needs doing by the user / the team:**
+- **Notebook entries are placeholders.** Replace each entry in `notebook-pages.tsx` with the team's own notes, then set `DRAFT = false` in `notebook.tsx`. Dates and plans there are stand-ins; no results.
+- Team: Tasks and Specific Tasks for each person (see Site structure). PI attributions too.
 - Upload the videos to iGEM Video Universe and send the embed addresses; they go in `VIDEOS` as `embed`. Until then the Watch cards link to YouTube.
 - Three more videos were due on 20 Oct 2026: add them to `VIDEOS`.
 
@@ -153,11 +158,11 @@ Open:
 - Communication (unlisted) overlaps with Public Engagement (quiz and orientations on both). Left alone on purpose; decide which page owns what.
 - Three expert articles (Rashi Bhavsar, Dr. Iswaran, Prof. Jatkar) have no card photo.
 - Results: every experiment says "awaiting data".
-- Team: three members without a sub-team; PI and advisor entries held back until confirmed.
 - Communication: video files and the 10 October event recordings.
 - Model: the tag-placement analysis on 1ZDH.
 - The navbar mosquito flaps constantly on every page; swap for a still image if that is distracting.
 - Label chips inside the Molecule and Bigger Picture figures still have their own coloured backgrounds; they are part of the drawings and were left alone on purpose.
 - Home chain: the fourth arrow ("Downward" back to "One trap") closes the ring; that is a design choice, drop it if the team prefers an open ring.
+- Notebook phone layout shows one page at a time; the hover/3D page turn was checked in the preview only at 1440 px and phone width.
 
 AI-use note: the GitLab repo has `.claude/RESPONSIBLE_AI_USE.md`. The team stays fully responsible for everything published.
