@@ -25,23 +25,30 @@ import "./team.css";
  * The Principal Investigators come first, each photograph above the name. The fourteen photographs follow, each cropped on the face and set in a
  * card of one size. Names are not supplied yet, so the cards carry none: fill in
  * `name` (and `attributions`) on a member below; the name rises over the photo on hover and
- * both show in the pop-up that a click opens. `file` keeps the
+ * the role, task tags and specific tasks show in the pop-up that a click opens. `file` keeps the
  * original photograph's number so names can be matched to it.
  *
  * The earlier sub-team bios are kept in writeups/team-bios.md.
  */
 
-/** One line of the person's attributions: what they did. Only add what the person has confirmed. */
+/**
+ * Attributions follow iGEM's own format: a role, a set of task tags, and the specific tasks
+ * written as "(1) Area – what they did; (2) ...". Fill in only what the person has confirmed.
+ */
 interface Person {
   name?: string;
   src: string;
-  /** Shown as "Attributions" in the pop-up. Empty until the person confirms them. */
-  attributions?: string[];
+  /** e.g. "Student", "Student Leader", "Primary PI". */
+  role?: string;
+  /** Task tags, e.g. "Analysis", "Wiki Coding", "Public Engagement". */
+  tasks?: string[];
+  /** "(1) Analysis – ...; (2) Software – ..." */
+  specificTasks?: string;
 }
 
 const PIS: Person[] = [
-  { name: "Dr. Shantanu Shukla", src: piShukla },
-  { name: "Dr. Vishal Singh", src: piSingh },
+  { name: "Dr. Shantanu Shukla", src: piShukla, role: "Principal Investigator" },
+  { name: "Dr. Vishal Singh", src: piSingh, role: "Principal Investigator" },
 ];
 
 interface Member extends Person {
@@ -93,7 +100,6 @@ function AttributionPopup({ person, onClose }: { person: Person; onClose: () => 
       prev?.focus();
     };
   }, [onClose]);
-  const items = person.attributions ?? [];
   return (
     <div className="tm-modal" onClick={onClose}>
       <div className="tm-dialog" role="dialog" aria-modal="true" aria-label={person.name ?? "Team member"} onClick={(e) => e.stopPropagation()}>
@@ -101,12 +107,15 @@ function AttributionPopup({ person, onClose }: { person: Person; onClose: () => 
         <img src={person.src} alt={person.name ?? "A member of the MOSKATEER team"} />
         <div className="tm-dialog-text">
           <h3>{person.name ?? "Team member"}</h3>
-          <h4>Attributions</h4>
-          {items.length ? (
-            <ul>{items.map((a) => <li key={a}>{a}</li>)}</ul>
+          <p className="tm-role">{person.role ?? "Role to be added"}</p>
+          <h4>Tasks</h4>
+          {person.tasks?.length ? (
+            <ul className="tm-tags">{person.tasks.map((t) => <li key={t}>{t}</li>)}</ul>
           ) : (
-            <p className="tm-pending">Attributions will be added soon.</p>
+            <p className="tm-pending">To be added.</p>
           )}
+          <h4>Specific tasks</h4>
+          <p className={person.specificTasks ? undefined : "tm-pending"}>{person.specificTasks ?? "To be added."}</p>
         </div>
       </div>
     </div>
