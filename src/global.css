@@ -24,10 +24,10 @@
    readers see Segoe UI and everyone else sees Noto Sans. That is intended.
 
    iGEM only serves assets from static.igem.wiki, so there are no CDN links
-   anywhere in this project. The woff2 files live in public/fonts/ for local
-   development; for the live wiki, upload the same files to
-   static.igem.wiki/teams/<TEAM_PATH>/fonts/ and point the four @font-face rules
-   below at them. Nothing else needs to change.
+   anywhere in this project. Every @font-face below loads from
+   static.igem.wiki/teams/6506/wiki/fonts/iisc/ (the same files are kept in
+   public/fonts/, uploaded from there). To add a font: put the woff2 in
+   public/fonts/, upload it to that folder, and point a new @font-face at it.
    ========================================================================== */
 
 /* The three text families ship as variable fonts: one file each, covering the
@@ -36,48 +36,46 @@
    faux-bold anywhere. Amatic SC is a static face with one weight.
 
    The URLs are absolute, because a bundled stylesheet is served from /assets/
-   and a relative path would resolve against that. For the iGEM build, replace
-   the four paths below with the static.igem.wiki URLs the files were uploaded
-   to; nothing else in the project refers to them. */
+   and a relative path would resolve against that. */
 
 @font-face {
   font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap;
-  src: url("/fonts/inter-var.woff2") format("woff2");
+  src: url("https://static.igem.wiki/teams/6506/wiki/fonts/iisc/inter-var.woff2") format("woff2");
 }
 @font-face {
   font-family: "Noto Sans"; font-style: normal; font-weight: 100 900; font-display: swap;
-  src: url("/fonts/noto-sans-var.woff2") format("woff2");
+  src: url("https://static.igem.wiki/teams/6506/wiki/fonts/iisc/noto-sans-var.woff2") format("woff2");
 }
 /* Onest is the label face inside the illustration SVGs. Inline SVG inherits
    fonts from the page, so self-hosting it is what makes the figures render in
    the intended face rather than a fallback. */
 @font-face {
   font-family: "Onest"; font-style: normal; font-weight: 100 900; font-display: swap;
-  src: url("/fonts/onest-var.woff2") format("woff2");
+  src: url("https://static.igem.wiki/teams/6506/wiki/fonts/iisc/onest-var.woff2") format("woff2");
 }
 /* Amatic SC — the large decorative SDG numerals on the Sustainability page. */
 @font-face {
   font-family: "Amatic SC"; font-style: normal; font-weight: 700; font-display: swap;
-  src: url("/fonts/amatic-sc-700.woff2") format("woff2");
+  src: url("https://static.igem.wiki/teams/6506/wiki/fonts/iisc/amatic-sc-700.woff2") format("woff2");
 }
 /* Patrick Hand and Kalam — the handwriting in the Notebook page (SIL Open Font License). */
 @font-face {
   font-family: "Patrick Hand"; font-style: normal; font-weight: 400; font-display: swap;
-  src: url("/fonts/patrick-hand-400.woff2") format("woff2");
+  src: url("https://static.igem.wiki/teams/6506/wiki/fonts/iisc/patrick-hand-400.woff2") format("woff2");
 }
 @font-face {
   font-family: "Kalam"; font-style: normal; font-weight: 700; font-display: swap;
-  src: url("/fonts/kalam-700.woff2") format("woff2");
+  src: url("https://static.igem.wiki/teams/6506/wiki/fonts/iisc/kalam-700.woff2") format("woff2");
 }
 /* Poppins — the geometric face the team's banner sets its tagline in, used for
    the tagline under the wordmark on the landing page and nowhere else. */
 @font-face {
   font-family: "Poppins"; font-style: normal; font-weight: 300; font-display: swap;
-  src: url("/fonts/poppins-300.woff2") format("woff2");
+  src: url("https://static.igem.wiki/teams/6506/wiki/fonts/iisc/poppins-300.woff2") format("woff2");
 }
 @font-face {
   font-family: "Poppins"; font-style: normal; font-weight: 400; font-display: swap;
-  src: url("/fonts/poppins-400.woff2") format("woff2");
+  src: url("https://static.igem.wiki/teams/6506/wiki/fonts/iisc/poppins-400.woff2") format("woff2");
 }
 
 /* --------------------------------------------------------------------------

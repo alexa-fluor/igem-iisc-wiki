@@ -72,9 +72,9 @@ Also hosted there: the animated mosquito `https://static.igem.wiki/teams/6506/wi
 
 ## Fonts
 
-Fonts are in `public/fonts/` (inter-var, noto-sans-var, onest-var, poppins-300/400, amatic-sc-700, patrick-hand-400 and kalam-700 for the Notebook's handwriting, both SIL OFL; about 215 KB) and are bundled into the build, referenced by `@font-face` in `src/global.css`. That works but is not what iGEM asks for.
+Fonts are hosted on static.igem.wiki, as iGEM asks: `https://static.igem.wiki/teams/6506/wiki/fonts/iisc/<file>.woff2`. The `@font-face` rules in `src/global.css` point there (the server sends `access-control-allow-origin: *`, so cross-origin loading works). The same files are kept in `public/fonts/`: inter-var, noto-sans-var, onest-var, poppins-300/400, amatic-sc-700, patrick-hand-400 and kalam-700 (the last two are the Notebook's handwriting, both SIL OFL). To add a font: put the woff2 in `public/fonts/`, upload it to the `fonts/iisc` folder, check the URL returns 200, then add an `@font-face`. No CDN links, no Google Fonts, ever.
 
-Still to do: upload them to static.igem.wiki (under `teams/6506/wiki/fonts/`), then point the `@font-face` `src:` URLs in `src/global.css` at the new URLs, and fill in the `TEAM_PATH` placeholders in `src/contents/sustainability.css` (the real value is `6506/wiki`). Old fonts from the previous wiki are already there, for example `.../teams/6506/wiki/fonts/amatic-sc/amaticsc-bold.woff2`. No CDN links, no Google Fonts, ever.
+The `TEAM_PATH` placeholders in `src/contents/sustainability.css` and `home.css` are inside comments (instructions for font files this wiki does not use); nothing to fill in.
 
 ## Pushing to GitLab (this is what deploys the live site)
 
@@ -152,7 +152,6 @@ Open:
 - Parts and Software: Best Part Collection and Best Software Tool are being targeted. The Parts page exists but is `unlisted`; add it under Lab later. A Software page needs real facts about the tool (what it does, how to run it, repo, validation); do not invent them.
 - Communication (unlisted) overlaps with Public Engagement (quiz and orientations on both). Left alone on purpose; decide which page owns what.
 - Three expert articles (Rashi Bhavsar, Dr. Iswaran, Prof. Jatkar) have no card photo.
-- Fonts still bundled; move them to static.igem.wiki (above).
 - Results: every experiment says "awaiting data".
 - Team: three members without a sub-team; PI and advisor entries held back until confirmed.
 - Communication: video files and the 10 October event recordings.
